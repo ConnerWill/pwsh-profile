@@ -5,23 +5,48 @@
 Function which(){
   <#
   .SYNOPSIS
-    Displays a function ScriptBlock
+    Show what a command is (like 'which' in linux).
 
   .DESCRIPTION
-    Displays a function ScriptBlock. Like 'which' in linux.
+    Resolves a command of any type:
+      * Alias       -> shows what it resolves to (following the chain).
+      * Function    -> shows its ScriptBlock definition.
+      * Cmdlet      -> shows the owning module.
+      * Application -> shows the path on disk.
 
   .EXAMPLE
-	  which Clear-Host
+	  which ez          # alias -> Reload-Profile
 
   .EXAMPLE
-	  which which
+	  which Clear-Host  # function/cmdlet
+
+  .EXAMPLE
+	  which git         # application path
   #>
   [CmdletBinding()]
   Param (
-    [Parameter(Mandatory = $true,Position = 0)][string]$Command
+    [Parameter(Mandatory = $true, Position = 0)][string]$Command
   )
-  Try { (Get-Item Function:\$Command).ScriptBlock }
-  Catch { Write-Error "Failed to display function" }
+
+  $cmd = Get-Command -Name $Command -ErrorAction Ignore
+  if (-not $cmd) {
+    Write-Error "'$Command' not found as an alias, function, cmdlet, or application."
+    return
+  }
+
+  switch ($cmd.CommandType) {
+    'Alias' {
+      $resolved = $cmd.ResolvedCommandName
+      Write-Output "$Command is an alias for '$resolved'"
+      # Recurse so you also see the underlying function/app definition.
+      if ($resolved) { which $resolved }
+    }
+    'Function'    { $cmd.ScriptBlock }
+    'Filter'      { $cmd.ScriptBlock }
+    'Cmdlet'      { Write-Output "$Command is a cmdlet in module '$($cmd.ModuleName)'" }
+    'Application' { $cmd.Source }
+    default       { $cmd | Format-List -Property Name, CommandType, Source, Version }
+  }
 }
 
 Function Get-CmdletAlias ($cmdletname) {
