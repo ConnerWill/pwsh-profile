@@ -160,7 +160,9 @@ Documents/PowerShell/
 │   └── functions/               # one file per function (loaded by 20_functions.ps1)
 │       │
 │       ├── Blink-Message.ps1
+│       ├── cdp.ps1
 │       ├── Convert-HexToAnsi.ps1
+│       ├── e.ps1
 │       ├── Encode-Command.ps1
 │       ├── Get-ANSIColors.ps1
 │       ├── Get-CmdletAlias.ps1
@@ -171,6 +173,7 @@ Documents/PowerShell/
 │       ├── Get-WindowsVersion.ps1
 │       ├── Get-WindowsVersionString.ps1
 │       ├── Instort-Module.ps1
+│       ├── ls.ps1
 │       ├── Motd-AsciiArt.ps1
 │       ├── New-ANSIBar.ps1
 │       ├── New-RedGreenGradient.ps1
@@ -183,15 +186,11 @@ Documents/PowerShell/
 │       ├── Show-ANSISequence.ps1
 │       ├── Show-ColorList.ps1
 │       ├── Show-ColorTable.ps1
+│       ├── ssh-local.ps1
 │       ├── Start_PSTranscript.ps1
 │       ├── Test-Command.ps1
-│       ├── Update-Windows.ps1
-│       ├── Write-BRUH.ps1
-│       ├── cdp.ps1
-│       ├── e.ps1
-│       ├── ls.ps1
-│       ├── ssh-local.ps1
 │       ├── touch.ps1
+│       ├── Update-Windows.ps1
 │       ├── which.ps1
 │       └── yays.ps1
 ├── local-modules/               # vendored modules loaded by path at startup
