@@ -31,7 +31,7 @@ Documents/PowerShell/
 ├── profile.ps1                  # bootstrap: variables, colors, module load, pwsh.d loader
 ├── Microsoft.PowerShell_profile.ps1  # CurrentUserCurrentHost (intentionally empty)
 ├── powershell-config.ps1        # optional local overrides, dot-sourced early (may be empty)
-├── install.ps1                  # one-time module installer (run manually)
+├── install-pwshprofile.ps1       # bootstrap: clone repo + install modules (run manually)
 ├── ascii-art.ps1                # ASCII art banners ($GRIMREAPER), sourced on demand
 ├── README.md
 ├── pwsh.d/                      # auto-loaded config fragments (in order)
@@ -121,18 +121,18 @@ All prompt colors are composed from the named `$color_*` variables defined in
 
 ## Installation
 
-PowerShell 7 loads this from your `Documents\PowerShell` directory. `install.ps1`
+PowerShell 7 loads this from your `Documents\PowerShell` directory. `install-pwshprofile.ps1`
 clones the repo there (backing up any existing profile) and installs the
 required modules.
 
 ### Quick bootstrap (one-liner)
 
 Run this in **PowerShell 7** — no manual clone needed. It downloads and runs
-`install.ps1`, which clones the repo to your profile directory and installs the
+`install-pwshprofile.ps1`, which clones the repo to your profile directory and installs the
 modules:
 
 ```powershell
-Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install.ps1 | Invoke-Expression
+Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression
 ```
 
 > `git` must be installed and on PATH for the clone step. When piped to
@@ -144,7 +144,7 @@ Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main
 
 ```powershell
 # Download then run (lets you pass parameters)
-$url = 'https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install.ps1'
+$url = 'https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1'
 Invoke-RestMethod $url -OutFile "$env:TEMP\pwsh-profile-install.ps1"
 pwsh -NoProfile -File "$env:TEMP\pwsh-profile-install.ps1"      # add -Force to reinstall modules
 ```
@@ -154,7 +154,7 @@ and just updates + installs modules):
 
 ```powershell
 git clone https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
-pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install.ps1"
+pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install-pwshprofile.ps1"
 ```
 
 Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,

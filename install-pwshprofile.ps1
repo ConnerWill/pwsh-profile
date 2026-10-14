@@ -8,12 +8,12 @@
   installs the modules it expects. Safe to run two ways:
 
     * Standalone bootstrap (repo not cloned yet):
-        Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install.ps1 | Invoke-Expression
+        Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression
       or download it and run:
-        pwsh -NoProfile -File .\install.ps1
+        pwsh -NoProfile -File .\install-pwshprofile.ps1
 
     * From inside an existing clone (just updates + installs modules):
-        pwsh -NoProfile -File "$HOME\Documents\PowerShell\install.ps1"
+        pwsh -NoProfile -File "$HOME\Documents\PowerShell\install-pwshprofile.ps1"
 
   It is intentionally NOT loaded on shell startup.
 

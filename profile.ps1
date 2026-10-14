@@ -98,7 +98,7 @@ Function Invoke-LoadPowerShellModules(){
   ## Define modules to load
   ## NOTE: posh-git and Plaster were removed from startup load (nothing in
   ## this profile uses them; the git prompt is hand-rolled in 40_prompt.ps1).
-  ## They remain available via the opt-in installer: install.ps1
+  ## They remain available via the opt-in installer: install-pwshprofile.ps1
   If ($host.Name -eq 'ConsoleHost'){
     $ModulesArray = @(`
       "Get-ChildItemColor",
