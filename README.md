@@ -153,12 +153,42 @@ Documents/PowerShell/
 │   ├── 40_prompt.ps1            # prompt() + git status segment
 │   ├── 50_keybindings.ps1       # PSReadLine KEY BINDINGS (Set-PSReadLineKeyHandler)
 │   └── functions/               # one file per function (loaded by 20_functions.ps1)
-│       ├── ls.ps1               #   l / ll / sl
-│       ├── touch.ps1  e.ps1  cdp.ps1  Search-Item.ps1
-│       ├── which.ps1  Get-Syntax.ps1  Test-Command.ps1  ...
-│       ├── Reload-Profile.ps1   #   reload / ez
-│       ├── Start_PSTranscript.ps1  ssh-local.ps1  Update-Windows.ps1  ...
-│       └── (ANSI/color, package-search, sysinfo helpers, ...)
+│       │
+│       ├── Blink-Message.ps1
+│       ├── Convert-HexToAnsi.ps1
+│       ├── Encode-Command.ps1
+│       ├── Get-ANSIColors.ps1
+│       ├── Get-CmdletAlias.ps1
+│       ├── Get-CommandInfo.ps1
+│       ├── Get-PSWho.ps1
+│       ├── Get-Syntax.ps1
+│       ├── Get-WiFiPasswords.ps1
+│       ├── Get-WindowsVersion.ps1
+│       ├── Get-WindowsVersionString.ps1
+│       ├── Instort-Module.ps1
+│       ├── Motd-AsciiArt.ps1
+│       ├── New-ANSIBar.ps1
+│       ├── New-RedGreenGradient.ps1
+│       ├── Out-ConditionalColor.ps1
+│       ├── Reload-Profile.ps1
+│       ├── Search-Choco.ps1
+│       ├── Search-Item.ps1
+│       ├── Search-Modules.ps1
+│       ├── Search-Script.ps1
+│       ├── Show-ANSISequence.ps1
+│       ├── Show-ColorList.ps1
+│       ├── Show-ColorTable.ps1
+│       ├── Start_PSTranscript.ps1
+│       ├── Test-Command.ps1
+│       ├── Update-Windows.ps1
+│       ├── Write-BRUH.ps1
+│       ├── cdp.ps1
+│       ├── e.ps1
+│       ├── ls.ps1
+│       ├── ssh-local.ps1
+│       ├── touch.ps1
+│       ├── which.ps1
+│       └── yays.ps1
 ├── local-modules/               # vendored modules loaded by path at startup
 └── Modules/                     # installed modules (PowerShellGet)
 ```
