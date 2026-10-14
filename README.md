@@ -85,16 +85,17 @@ Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
 
 ### Try it in Docker (throwaway)
 
-Spin up a disposable PowerShell 7 container, run the bootstrap installer
-non-interactively, then drop into a fresh `pwsh` session with the profile
-loaded:
+Spin up a disposable PowerShell 7 container, install `git`, run the bootstrap
+installer, then drop into a fresh `pwsh` session with the profile loaded:
 
 ```bash
-docker run -it --rm mcr.microsoft.com/powershell:latest pwsh -NoProfile -c "Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression; exec pwsh"
+docker run -it --rm mcr.microsoft.com/powershell:latest bash -c "apt-get update -qq && apt-get install -y -qq git && pwsh -NoProfile -c 'Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression' && exec pwsh"
 ```
 
-> This clones into the container's profile directory and installs modules.
-> Nothing on your host is touched — the container is removed on exit (`--rm`).
+> The base image has no `git`, so it is installed first (the image is
+> Ubuntu-based). The installer clones into the container's profile directory
+> (`~/.config/powershell` on Linux) and installs modules. Nothing on your host
+> is touched — the container is removed on exit (`--rm`).
 
 ### (Optional) Allow local script execution
 
