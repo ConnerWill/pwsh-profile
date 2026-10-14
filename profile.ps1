@@ -75,9 +75,21 @@ if ($PSVersionTable.PSVersion.Major -ge 6){
 ###{{{ CORE HELPERS (is_admin + colored message helpers; used during load)
 
 function is_admin {
-    $admin = [security.principal.windowsbuiltinrole]::administrator
-    $id = [security.principal.windowsidentity]::getcurrent()
-    ([security.principal.windowsprincipal]($id)).isinrole($admin)
+    # Cross-platform elevation check. On Windows use the WindowsPrincipal API;
+    # elsewhere (Linux/macOS) treat uid 0 (root) as elevated. Must never throw,
+    # because the prompt calls this on every render -- an exception here makes
+    # PowerShell fall back to the default 'PS>' prompt.
+    try {
+        if ($IsWindows -or $PSVersionTable.PSEdition -eq 'Desktop') {
+            $id = [Security.Principal.WindowsIdentity]::GetCurrent()
+            return ([Security.Principal.WindowsPrincipal]$id).IsInRole(
+                [Security.Principal.WindowsBuiltInRole]::Administrator)
+        }
+        else {
+            return ((id -u) -eq 0)
+        }
+    }
+    catch { return $false }
 }
 
 # messages
