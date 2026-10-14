@@ -37,77 +37,88 @@ $PromptColors = @{
 
 Function Get-GitPromptSegment {
   <#
-    Builds a zsh-style git segment:  :(repo)-[branch⊕N⊝N]
-      ⊕N = staged / added entries, ⊝N = deleted entries
-    Color reflects repo state:
-      clean      -> green  ($PromptColors.GitClean)
-      dirty      -> yellow ($PromptColors.GitDirty)
-      conflicts  -> red    ($PromptColors.GitConf)
+    Builds a zsh-style git segment:  :(repo)-[branch⊕N⊝N⊛N]
+      ⊕N = staged / modified   ⊝N = deleted   ⊛N = untracked
+    Branch color by priority: conflict(orange) > untracked(red) > dirty(yellow) > clean(green).
     Returns an empty string when not inside a git work tree.
+
+    Performance: uses a SINGLE `git status --porcelain=v2 --branch` call for the
+    in-repo check, branch name, AND file states (plus one cheap --show-toplevel
+    for the repo name). This keeps the prompt fast -- the old version spawned
+    four git processes on every render.
   #>
 
-  # Fast bail-out if git isn't available.
   if (-not (Get-Command git -ErrorAction Ignore)) { return "" }
 
-  # Are we inside a work tree? (silence stderr; check exit code)
-  $inside = (git rev-parse --is-inside-work-tree 2>$null)
-  if ($LASTEXITCODE -ne 0 -or $inside -ne 'true') { return "" }
+  # One call: branch header + per-file status. Non-zero exit => not a repo.
+  $status = git status --porcelain=v2 --branch 2>$null
+  if ($LASTEXITCODE -ne 0) { return "" }
 
-  # Repo name = basename of the toplevel directory.
-  $top = (git rev-parse --show-toplevel 2>$null)
-  $repo = if ($top) { Split-Path -Leaf $top } else { "" }
-
-  # Branch (or short SHA when detached).
-  $branch = (git symbolic-ref --short -q HEAD 2>$null)
-  if (-not $branch) { $branch = (git rev-parse --short HEAD 2>$null) }
-  if (-not $branch) { $branch = "?" }
-
-  # Porcelain status -> count staged/modified (added), deleted, and untracked.
+  $branch    = $null
   $added     = 0
   $deleted   = 0
   $untracked = 0
   $conflict  = 0
-  foreach ($line in (git status --porcelain 2>$null)) {
-    if ($line.Length -lt 2) { continue }
-    $x = $line[0]   # staged (index) status
-    $y = $line[1]   # worktree status
-    # Untracked files are reported as '??'.
-    if ($x -eq '?' -and $y -eq '?') { $untracked++; continue }
-    # Merge conflicts: any 'U', or AA / DD.
-    if ($x -eq 'U' -or $y -eq 'U' -or ($x -eq 'A' -and $y -eq 'A') -or ($x -eq 'D' -and $y -eq 'D')) {
-      $conflict++
-      continue
+
+  foreach ($line in $status) {
+    if (-not $line) { continue }
+
+    # Header lines start with '# '. Capture the branch name.
+    if ($line.StartsWith('# branch.head ')) { $branch = $line.Substring(14).Trim(); continue }
+    if ($line.StartsWith('#')) { continue }
+
+    # Entry lines are keyed by their first token: 1/2 = changed, u = unmerged,
+    # ? = untracked. (Use literal checks -- NOT -Wildcard, where '?' is a
+    # single-char wildcard and would match the '#' header lines.)
+    $kind = $line[0]
+    switch ($kind) {
+      '?' { $untracked++; continue }
+      'u' { $conflict++;  continue }
+      '2' { $added++;     continue }   # renamed/copied
+      '1' {
+        # "1 <XY> ..." : X = staged (index), Y = worktree. '.' means unchanged.
+        $x = $line[2]; $y = $line[3]
+        if     ($x -eq 'D' -or $y -eq 'D') { $deleted++ }
+        elseif ($x -ne '.' -or $y -ne '.') { $added++ }
+        continue
+      }
     }
-    if ($x -eq 'A' -or $x -eq 'M' -or $x -eq 'R' -or $x -eq 'C' -or $y -eq 'M' -or $y -eq 'A') { $added++ }
-    if ($x -eq 'D' -or $y -eq 'D') { $deleted++ }
   }
 
-  # Choose branch color by priority: conflict > untracked > tracked-dirty > clean.
-  if     ($conflict  -gt 0)              { $gitColor = $PromptColors.GitConf  }  # orange
-  elseif ($untracked -gt 0)              { $gitColor = $PromptColors.GitUntrk }  # red
-  elseif (($added + $deleted) -gt 0)     { $gitColor = $PromptColors.GitDirty }  # yellow
-  else                                   { $gitColor = $PromptColors.GitClean }  # green
+  if (-not $branch -or $branch -eq '(detached)') {
+    # Detached HEAD: show short oid from the branch.oid header if present.
+    $oidLine = $status | Where-Object { $_ -like '# branch.oid *' } | Select-Object -First 1
+    if ($oidLine) { $branch = $oidLine.Substring(13).Trim().Substring(0,7) } else { $branch = '?' }
+  }
+
+  # Repo name = basename of the work-tree root (one more lightweight call).
+  $top  = git rev-parse --show-toplevel 2>$null
+  $repo = if ($top) { Split-Path -Leaf $top } else { '' }
+
+  if     ($conflict  -gt 0)          { $gitColor = $PromptColors.GitConf  }  # orange
+  elseif ($untracked -gt 0)          { $gitColor = $PromptColors.GitUntrk }  # red
+  elseif (($added + $deleted) -gt 0) { $gitColor = $PromptColors.GitDirty }  # yellow
+  else                               { $gitColor = $PromptColors.GitClean }  # green
 
   $reset = $PromptColors.Reset
   $paren = $PromptColors.Bracket
 
-  # Build counters only when non-zero, mirroring the zsh glyph style.
-  #   ⊕N = staged/modified (green)   ⊝N = deleted (yellow)   ⊛N = untracked (red)
-  # Counter colors are fixed per-kind and independent of the branch-state color.
+  # Counters (fixed per-kind colors): ⊕ staged/modified, ⊝ deleted, ⊛ untracked.
   $counts = ""
   if ($added     -gt 0) { $counts += "${color_bold}${color_green}⊕${added}${reset}" }
   if ($deleted   -gt 0) { $counts += "${color_bold}${color_yellow}⊝${deleted}${reset}" }
   if ($untracked -gt 0) { $counts += "${color_bold}${color_red}⊛${untracked}${reset}" }
 
-  # :(repo)-[branch⊕N⊝N⊛N]
   return "${paren}:($repo)-[${gitColor}${branch}${counts}${paren}]${reset}"
 }
 
 Function prompt {
   $c = $PromptColors
 
-  $PromptUserName    = "$env:USERNAME"
-  $PromptHostName    = "$env:COMPUTERNAME"
+  # User/host: prefer Windows vars, fall back to Linux ($USER / hostname) so the
+  # prompt is correct cross-platform (and in containers).
+  $PromptUserName    = if ($env:USERNAME) { $env:USERNAME } else { $env:USER }
+  $PromptHostName    = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Environment]::MachineName }
   $PromptPWD         = "$PWD"
   $PromptDate        = "($(Get-Date -UFormat '%Y-%m-%d %H:%M:%S'))"
   $PromptRandomColor = Get-Random -Min 1 -Max 255
