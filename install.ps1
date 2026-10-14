@@ -35,6 +35,44 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+# -----------------------------------------------------------------------------
+# Fail fast: this profile targets PowerShell 7+. #Requires above handles the
+# normal file-run case, but it is NOT enforced when the script is piped to
+# Invoke-Expression (the bootstrap one-liner), so guard explicitly too.
+# -----------------------------------------------------------------------------
+if ($PSVersionTable.PSVersion.Major -lt 7) {
+  Write-Host "`e[1;41;97m[ERROR]`e[0m This profile requires PowerShell 7+. You are on $($PSVersionTable.PSVersion)." -ForegroundColor Red
+  Write-Host "Install PowerShell 7 (https://aka.ms/powershell) and re-run from 'pwsh'." -ForegroundColor Yellow
+  exit 1
+}
+
+# -----------------------------------------------------------------------------
+# Banner
+# -----------------------------------------------------------------------------
+$__banner = @'
+
+                     .-+=======---::..
+                   :=+##@@@@@@@@@@@@@%@@@#.
+                .=:*=@#@@@@@@%@@@@@@@@@@@@%+.      ..
+  ...::..    .:+.*=%%%@@@@@@*%@@@@@@@@@@@@@%#-.    ..
+ .%@@@%%%%*--=.=*+@#@@@@@@@@=#@@@@@@@@@@@@@@@##-.:..:
+ *@@@@@@@@@@@@@=%@##%%#####*+%%#%%%%%%%%%%%@@@@*%#@%%#*+=:..
+=%#....................:::::::--:-+#@@@@@@@@@@@@@#*%@@@@@%%#+=+*+:.
+#@@*=-:-::.-@@#**%@@-.       +%%.    .... . ...............:-=+#%@@%+:.
+ #%@@@@@@@%*@@@@@@@@=.#@@@@%@@@@@@@%%%%%###*=:-:......  .#%%##%=.    .:=.
+#%###**++++@@@@+::-#@@@:---==++***###%%%%@@@@@@#%*@@@@@@:*@@@@@@#+%%+==#@.
+=@@@@@@@@@@@@*.     :@@@@@@@@@@@%%%%%##****+++=---:::..:@@@%-:=@@@-::::..
+=#*++@@@@@@@. :@@%. =@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@=    .*@@@@@@@@@-
+  .:=#%@@@@%. =@@@: =@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@#..@@=.:@@@@@@@@:.
+          .@=  .:. .%%++:..:::::::::--------===#%%%%%%%@#..%@-.:@%%%%%=
+           .%#:. .=@%.                                 -@+    .**.
+            .:#@@@#-.                                   -@@+=*@+.
+                                                         ..--:.
+'@
+$__bannerColor = Get-Random -Minimum 16 -Maximum 231
+Write-Host "`e[0;1;38;5;${__bannerColor}m$__banner`e[0m"
+Write-Host "`e[0;1;38;5;51m  pwsh-profile installer`e[0m`n"
+
 # Target = the CurrentUserAllHosts profile directory (handles OneDrive redirect).
 $ProfileDir = Split-Path -Path $PROFILE.CurrentUserAllHosts
 
