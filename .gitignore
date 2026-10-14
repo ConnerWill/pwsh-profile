@@ -13,3 +13,6 @@ powershell-config.ps1
 # PSReadLine / transcript artifacts if they ever land here.
 *_history.txt
 Transcripts/
+
+# Editor project settings.
+.vscode/
