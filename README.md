@@ -119,14 +119,66 @@ All prompt colors are composed from the named `$color_*` variables defined in
 
 ---
 
-## Setup on a new machine
+## Installation
 
-1. Place this directory at `C:\Users\<you>\Documents\PowerShell\`.
-2. Install the expected modules (one-time):
-   ```powershell
-   pwsh -NoProfile -File "$HOME\Documents\PowerShell\install.ps1"
-   ```
-3. Open a new PowerShell 7 session (or run `reload`).
+PowerShell 7 loads this from your `Documents\PowerShell` directory, so the repo
+is cloned to that location.
+
+### 1. Clone into the PowerShell profile directory
+
+```powershell
+# Back up any existing profile first
+$dest = "$HOME\Documents\PowerShell"
+if (Test-Path $dest) { Rename-Item $dest "$dest.bak-$(Get-Date -Format yyyyMMddHHmmss)" }
+
+git clone https://github.com/ConnerWill/pwsh-profile.git $dest
+```
+
+> If `$HOME\Documents` is redirected to OneDrive, clone to that OneDrive
+> `Documents\PowerShell` path instead. Confirm the target with:
+> `Split-Path $PROFILE.CurrentUserAllHosts`.
+
+### 2. Install the expected modules (one-time)
+
+```powershell
+pwsh -NoProfile -File "$HOME\Documents\PowerShell\install.ps1"
+```
+
+This installs `Get-ChildItemColor`, `PSReadLine`, `posh-git`, and `Plaster`
+for the current user (idempotent — skips anything already present).
+
+### 3. (Optional) Allow local script execution
+
+If the profile is blocked from running:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+### 4. Start a new PowerShell 7 session
+
+Open a new `pwsh` window (or run `reload` in an existing one). You should see
+the module-load line, a random ASCII banner, and the git-aware prompt.
+
+### Personal / machine-local overrides
+
+Anything private or machine-specific goes in `powershell-config.ps1` in the
+profile directory. It is **gitignored** and dot-sourced early at startup, so it
+never ends up in the repo. Example:
+
+```powershell
+# powershell-config.ps1
+function ssh-local-vm { ssh-local -User me -Hostname localhost -Port 2222 }
+$EDITOR = 'code'
+```
+
+### Updating
+
+```powershell
+cd "$HOME\Documents\PowerShell"
+git pull
+reload   # or open a new shell
+```
 
 ---
 
