@@ -26,6 +26,7 @@
   - [Color / ANSI](#color--ansi)
   - [Package / module search](#package--module-search)
   - [System / admin](#system--admin)
+  - [Active Directory](#active-directory)
   - [Host / system info](#host--system-info)
   - [Misc](#misc)
 - [Line endings (CRLF)](#line-endings-crlf)
@@ -289,6 +290,23 @@ Aliases are shown in parentheses.
 | `ssh-local`               | SSH helper: `ssh-local -User <u> -Hostname <h> -Port <p>` |
 | `Get-WiFiPasswords`       | List saved Wi-Fi networks + passwords as a table |
 | `Update-Windows`          | Download and install Windows updates            |
+
+### Active Directory
+
+> Requires the `ActiveDirectory` module (RSAT). Each function fails gracefully
+> with a clear error if the module or lookup is unavailable.
+>
+> **Run as a specific user / DC:** every function accepts `-Credential` and
+> `-Server`, passed through to the AD cmdlets — you don't need to be logged in
+> as that user. Example:
+> `Get-AdUserInfo jdoe -Credential (Get-Credential) -Server dc01`
+
+| Function                   | Description                                     |
+| -------------------------- | ----------------------------------------------- |
+| `Get-UserAdGroupMembership`| List the AD groups a user (or users) belongs to |
+| `Get-AdUserInfo`           | Show common AD attributes for a user            |
+| `Get-AdGroupMembers`       | List members of an AD group (`-Recursive` for nested) |
+| `Get-LockedAdUsers`        | Find accounts that are currently locked out     |
 
 ### Host / system info
 
