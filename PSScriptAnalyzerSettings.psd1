@@ -28,6 +28,9 @@
         # $global:PSReadLineMarks etc. are intentional interactive globals.
         'PSAvoidGlobalVars',
         # ASCII-art / glyph files don't need a UTF-8 BOM.
-        'PSUseBOMForUnicodeEncodedFile'
+        'PSUseBOMForUnicodeEncodedFile',
+        # Several helpers use New-/Set- verbs but don't change system state
+        # (e.g. New-ANSIBar builds a string), so -WhatIf/-Confirm is noise.
+        'PSUseShouldProcessForStateChangingFunctions'
     )
 }

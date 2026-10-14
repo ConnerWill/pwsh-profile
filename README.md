@@ -266,6 +266,7 @@ Aliases are shown in parentheses.
 | `Show-ColorList`        | List console colors with their indices             |
 | `Show-ANSISequence`     | Display ANSI escape sequences (basic/fore/back/RGB)|
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
+| `draw_line`             | Draw a single full-width line in a given color (default green) |
 | `New-RedGreenGradient`  | Render a red→green gradient bar                     |
 | `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
 | `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
