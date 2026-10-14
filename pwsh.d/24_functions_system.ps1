@@ -106,7 +106,7 @@ Function Reload-Profile(){
     Reload-Profile
   #>
   [CmdletBinding()]
-  [Alias('reload','src','ez')]
+  [Alias('reload','ez')]
   Param()
   $profilePath = $PROFILE.CurrentUserAllHosts
   if (Test-Path -Path $profilePath) {

@@ -221,7 +221,7 @@ All prompt colors are composed from the named `$color_*` variables defined in
 | `which <name>`         | show a function's ScriptBlock                         |
 | `Get-Syntax` / `synt`  | show a command's syntax                              |
 | `search` (Search-Item) | recursive filename search                            |
-| `Reload-Profile` / `reload` / `src` / `ez` | re-source the profile in place    |
+| `Reload-Profile` / `reload` / `ez` | re-source the profile in place           |
 | `Get-PwSHKeybindings`  | list PSReadLine key handlers                         |
 
 ---
