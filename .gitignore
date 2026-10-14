@@ -1,0 +1,15 @@
+# Installed modules (managed by PowerShellGet / install.ps1, not source).
+Modules/
+
+# Reference material, not part of the active config.
+examples/
+
+# Session backups created during edits.
+.profile-backup-*/
+
+# Local, machine-specific overrides.
+powershell-config.ps1
+
+# PSReadLine / transcript artifacts if they ever land here.
+*_history.txt
+Transcripts/

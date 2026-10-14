@@ -1,0 +1,19 @@
+# PowerShell is used on Windows and expects CRLF line endings.
+# Enforce CRLF for PowerShell sources so clones on any machine stay consistent
+# and avoid stray ^M / mixed-ending problems.
+*.ps1   text eol=crlf
+*.psm1  text eol=crlf
+*.psd1  text eol=crlf
+*.ps1xml text eol=crlf
+
+# Docs/config: normalize to LF.
+*.md    text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+
+# Treat these as binary (no EOL translation).
+*.png   binary
+*.ico   binary
+*.ttf   binary
+*.otf   binary
