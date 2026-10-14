@@ -322,6 +322,7 @@ Aliases are shown in parentheses.
 | Function          | Description                                             |
 | ----------------- | ------------------------------------------------------- |
 | `Motd-AsciiArt`   | Print the startup ASCII banner (when `$ShowStartupArt`) |
+| `Invoke-BeepMusic` (`beepmusic`) | Play random beeps through the console speaker (Windows; `-Infinite` to loop) |
 | `Get-PwSHKeybindings` | List all PSReadLine key handlers (defined in `50_keybindings.ps1`) |
 
 ---
