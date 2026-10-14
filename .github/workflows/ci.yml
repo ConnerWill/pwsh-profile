@@ -1,0 +1,107 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  lint:
+    name: Lint (PSScriptAnalyzer)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+
+      - name: Run PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          # Only lint first-party, git-tracked files (skip vendored module trees).
+          $files = git ls-files '*.ps1' '*.psm1' '*.psd1' |
+            Where-Object { $_ -notmatch '^(local-modules|Modules)/' }
+
+          $results = Invoke-ScriptAnalyzer -Path $files `
+            -Settings ./PSScriptAnalyzerSettings.psd1
+
+          if ($results) {
+            $results | Format-Table -AutoSize | Out-String | Write-Host
+          }
+
+          $errors = @($results | Where-Object Severity -eq 'Error')
+          $warnings = @($results | Where-Object Severity -eq 'Warning')
+          Write-Host "PSScriptAnalyzer: $($errors.Count) error(s), $($warnings.Count) warning(s)."
+
+          # Fail the build only on errors; warnings are reported but non-blocking.
+          if ($errors.Count -gt 0) {
+            Write-Error "PSScriptAnalyzer reported $($errors.Count) error(s)."
+            exit 1
+          }
+
+  test:
+    name: Parse & structure tests (Pester)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Pester
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Install-Module Pester -MinimumVersion 5.0 -Scope CurrentUser -Force
+
+      - name: Run Pester tests
+        shell: pwsh
+        run: |
+          $cfg = New-PesterConfiguration
+          $cfg.Run.Path = './tests'
+          $cfg.Run.Exit = $true
+          $cfg.Output.Verbosity = 'Detailed'
+          $cfg.TestResult.Enabled = $true
+          $cfg.TestResult.OutputPath = 'testresults.xml'
+          Invoke-Pester -Configuration $cfg
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pester-results
+          path: testresults.xml
+
+  docker-install:
+    name: Install smoke test (Docker / pwsh)
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/powershell:latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Place profile and verify it loads in a clean pwsh
+        shell: pwsh
+        run: |
+          # Resolve where PowerShell expects the CurrentUserAllHosts profile,
+          # copy this checkout there (simulating a clone to that location), then
+          # install modules and launch a fresh session so the real $PROFILE
+          # resolution finds pwsh.d/.
+          $dest = Split-Path -Parent $PROFILE.CurrentUserAllHosts
+          New-Item -ItemType Directory -Path $dest -Force | Out-Null
+          Copy-Item -Path "$(Get-Location)/*" -Destination $dest -Recurse -Force
+
+          Write-Host "--- Installing modules (SkipClone; already placed) ---"
+          & "$dest/install-pwshprofile.ps1" -SkipClone
+
+          Write-Host "`n--- Loading profile in a fresh pwsh session ---"
+          $out = pwsh -Command "if (`$?) { 'STARTED' }; prompt | Out-Null; 'PROFILE LOADED OK'"
+          $out | Write-Host
+          if ($out -notmatch 'PROFILE LOADED OK') {
+            Write-Error "Profile did not load cleanly in the container."
+            exit 1
+          }
+
+

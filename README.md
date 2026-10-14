@@ -8,6 +8,24 @@
 
 ---
 
+## Contents
+
+- [Overview](#overview)
+- [Installation](#installation)
+  - [Quick bootstrap (one-liner)](#quick-bootstrap-one-liner)
+  - [Manual](#manual)
+  - [Try it in Docker (throwaway)](#try-it-in-docker-throwaway)
+  - [Personal / machine-local overrides](#personal--machine-local-overrides)
+  - [Updating](#updating)
+- [Layout](#layout)
+- [Load order](#load-order)
+- [The prompt](#the-prompt)
+- [Handy commands](#handy-commands)
+- [Line endings (CRLF)](#line-endings-crlf)
+- [Editing tips](#editing-tips)
+
+---
+
 ## Overview
 
 This is a **PowerShell 7** (`pwsh`) profile organized as a small bootstrap
@@ -21,6 +39,95 @@ This is a **PowerShell 7** (`pwsh`) profile organized as a small bootstrap
   keybindings), split by domain so each piece is easy to find and edit.
 
 The numeric filename prefixes control load order.
+
+---
+
+## Installation
+
+PowerShell 7 loads this from your `Documents\PowerShell` directory. `install-pwshprofile.ps1`
+clones the repo there (backing up any existing profile) and installs the
+required modules.
+
+### Quick bootstrap (one-liner)
+
+Run this in **PowerShell 7** — no manual clone needed. It downloads and runs
+`install-pwshprofile.ps1`, which clones the repo to your profile directory and installs the
+modules:
+
+```powershell
+Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression
+```
+
+> `git` must be installed and on PATH for the clone step. When piped to
+> `Invoke-Expression` the script runs with its defaults (you can't pass
+> parameters through the pipe — use the manual method below if you need
+> `-Force`/`-SkipClone`).
+
+### Manual
+
+```powershell
+# Download then run (lets you pass parameters)
+$url = 'https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1'
+Invoke-RestMethod $url -OutFile "$env:TEMP\pwsh-profile-install.ps1"
+pwsh -NoProfile -File "$env:TEMP\pwsh-profile-install.ps1"      # add -Force to reinstall modules
+```
+
+Or clone yourself and run the in-repo installer (it detects the existing clone
+and just updates + installs modules):
+
+```powershell
+git clone https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
+pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install-pwshprofile.ps1"
+```
+
+Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
+`PSReadLine`, `posh-git`, `Plaster`, `PSFunctionTools`.
+
+### Try it in Docker (throwaway)
+
+Spin up a disposable PowerShell 7 container, run the bootstrap installer
+non-interactively, then drop into a fresh `pwsh` session with the profile
+loaded:
+
+```bash
+docker run -it --rm mcr.microsoft.com/powershell:latest pwsh -NoProfile -c "Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression; exec pwsh"
+```
+
+> This clones into the container's profile directory and installs modules.
+> Nothing on your host is touched — the container is removed on exit (`--rm`).
+
+### (Optional) Allow local script execution
+
+If the profile is blocked from running:
+
+```powershell
+Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
+```
+
+### Start a new PowerShell 7 session
+
+Open a new `pwsh` window (or run `reload` in an existing one). You should see
+the module-load line, a random ASCII banner, and the git-aware prompt.
+
+### Personal / machine-local overrides
+
+Anything private or machine-specific goes in `powershell-config.ps1` in the
+profile directory. It is **gitignored** and dot-sourced early at startup, so it
+never ends up in the repo. Example:
+
+```powershell
+# powershell-config.ps1
+function ssh-local-vm { ssh-local -User me -Hostname localhost -Port 2222 }
+$EDITOR = 'code'
+```
+
+### Updating
+
+```powershell
+cd "$HOME\Documents\PowerShell"
+git pull
+reload   # or open a new shell
+```
 
 ---
 
@@ -116,82 +223,6 @@ All prompt colors are composed from the named `$color_*` variables defined in
 | `search` (Search-Item) | recursive filename search                            |
 | `Reload-Profile` / `reload` / `src` | re-source the profile in place          |
 | `Get-PwSHKeybindings`  | list PSReadLine key handlers                         |
-
----
-
-## Installation
-
-PowerShell 7 loads this from your `Documents\PowerShell` directory. `install-pwshprofile.ps1`
-clones the repo there (backing up any existing profile) and installs the
-required modules.
-
-### Quick bootstrap (one-liner)
-
-Run this in **PowerShell 7** — no manual clone needed. It downloads and runs
-`install-pwshprofile.ps1`, which clones the repo to your profile directory and installs the
-modules:
-
-```powershell
-Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1 | Invoke-Expression
-```
-
-> `git` must be installed and on PATH for the clone step. When piped to
-> `Invoke-Expression` the script runs with its defaults (you can't pass
-> parameters through the pipe — use the manual method below if you need
-> `-Force`/`-SkipClone`).
-
-### Manual
-
-```powershell
-# Download then run (lets you pass parameters)
-$url = 'https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install-pwshprofile.ps1'
-Invoke-RestMethod $url -OutFile "$env:TEMP\pwsh-profile-install.ps1"
-pwsh -NoProfile -File "$env:TEMP\pwsh-profile-install.ps1"      # add -Force to reinstall modules
-```
-
-Or clone yourself and run the in-repo installer (it detects the existing clone
-and just updates + installs modules):
-
-```powershell
-git clone https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
-pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install-pwshprofile.ps1"
-```
-
-Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
-`PSReadLine`, `posh-git`, `Plaster`, `PSFunctionTools`.
-
-### (Optional) Allow local script execution
-
-If the profile is blocked from running:
-
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
-```
-
-### Start a new PowerShell 7 session
-
-Open a new `pwsh` window (or run `reload` in an existing one). You should see
-the module-load line, a random ASCII banner, and the git-aware prompt.
-
-### Personal / machine-local overrides
-
-Anything private or machine-specific goes in `powershell-config.ps1` in the
-profile directory. It is **gitignored** and dot-sourced early at startup, so it
-never ends up in the repo. Example:
-
-```powershell
-# powershell-config.ps1
-function ssh-local-vm { ssh-local -User me -Hostname localhost -Port 2222 }
-$EDITOR = 'code'
-```
-
-### Updating
-
-```powershell
-cd "$HOME\Documents\PowerShell"
-git pull
-reload   # or open a new shell
-```
 
 ---
 

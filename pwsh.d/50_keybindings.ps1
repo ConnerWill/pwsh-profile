@@ -91,6 +91,8 @@ Set-PSReadLineKeyHandler -Chord 'Ctrl+d,Ctrl+c' -Function CaptureScreen
 # key bindings.
 Set-PSReadLineKeyHandler -Key Alt+d -Function ShellKillWord
 Set-PSReadLineKeyHandler -Key Alt+Backspace -Function ShellBackwardKillWord
+## Ctrl+w deletes the word before the cursor (like bash/readline).
+Set-PSReadLineKeyHandler -Chord 'Ctrl+w' -Function BackwardKillWord
 Set-PSReadLineKeyHandler -Key Alt+b -Function ShellBackwardWord
 Set-PSReadLineKeyHandler -Key Alt+f -Function ShellForwardWord
 Set-PSReadLineKeyHandler -Key Alt+B -Function SelectShellBackwardWord
