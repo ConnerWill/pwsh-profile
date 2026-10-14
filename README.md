@@ -121,33 +121,46 @@ All prompt colors are composed from the named `$color_*` variables defined in
 
 ## Installation
 
-PowerShell 7 loads this from your `Documents\PowerShell` directory, so the repo
-is cloned to that location.
+PowerShell 7 loads this from your `Documents\PowerShell` directory. `install.ps1`
+clones the repo there (backing up any existing profile) and installs the
+required modules.
 
-### 1. Clone into the PowerShell profile directory
+### Quick bootstrap (one-liner)
 
-```powershell
-# Back up any existing profile first
-$dest = "$HOME\Documents\PowerShell"
-if (Test-Path $dest) { Rename-Item $dest "$dest.bak-$(Get-Date -Format yyyyMMddHHmmss)" }
-
-git clone https://github.com/ConnerWill/pwsh-profile.git $dest
-```
-
-> If `$HOME\Documents` is redirected to OneDrive, clone to that OneDrive
-> `Documents\PowerShell` path instead. Confirm the target with:
-> `Split-Path $PROFILE.CurrentUserAllHosts`.
-
-### 2. Install the expected modules (one-time)
+Run this in **PowerShell 7** — no manual clone needed. It downloads and runs
+`install.ps1`, which clones the repo to your profile directory and installs the
+modules:
 
 ```powershell
-pwsh -NoProfile -File "$HOME\Documents\PowerShell\install.ps1"
+Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install.ps1 | Invoke-Expression
 ```
 
-This installs `Get-ChildItemColor`, `PSReadLine`, `posh-git`, and `Plaster`
-for the current user (idempotent — skips anything already present).
+> `git` must be installed and on PATH for the clone step. When piped to
+> `Invoke-Expression` the script runs with its defaults (you can't pass
+> parameters through the pipe — use the manual method below if you need
+> `-Force`/`-SkipClone`).
 
-### 3. (Optional) Allow local script execution
+### Manual
+
+```powershell
+# Download then run (lets you pass parameters)
+$url = 'https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main/install.ps1'
+Invoke-RestMethod $url -OutFile "$env:TEMP\pwsh-profile-install.ps1"
+pwsh -NoProfile -File "$env:TEMP\pwsh-profile-install.ps1"      # add -Force to reinstall modules
+```
+
+Or clone yourself and run the in-repo installer (it detects the existing clone
+and just updates + installs modules):
+
+```powershell
+git clone https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
+pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install.ps1"
+```
+
+Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
+`PSReadLine`, `posh-git`, `Plaster`, `PSFunctionTools`.
+
+### (Optional) Allow local script execution
 
 If the profile is blocked from running:
 
@@ -155,7 +168,7 @@ If the profile is blocked from running:
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
 
-### 4. Start a new PowerShell 7 session
+### Start a new PowerShell 7 session
 
 Open a new `pwsh` window (or run `reload` in an existing one). You should see
 the module-load line, a random ASCII banner, and the git-aware prompt.
