@@ -142,20 +142,32 @@ Documents/PowerShell/
 ├── install-pwshprofile.ps1       # bootstrap: clone repo + install modules (run manually)
 ├── ascii-art.ps1                # ASCII art banners ($GRIMREAPER), sourced on demand
 ├── README.md
-├── pwsh.d/                      # auto-loaded config fragments (in order)
-│   ├── 02_preferences.ps1       # $PSDefaultParameterValues / preference notes
+├── pwsh.d/                      # auto-loaded config fragments (in filename order)
+│   ├── 01_variables.ps1         # environment variables (XDG paths, EDITOR, HISTFILE, ...)
+│   ├── 02_preferences.ps1       # shell preferences (UTF-8, ConciseView, telemetry opt-out)
 │   ├── 06_modules.ps1           # ensure optional modules (idempotent)
-│   ├── 20_functions_fs.ps1      # filesystem / navigation: l, ll, sl, touch, cdp, e, Search-Item
-│   ├── 21_functions_cmd.ps1     # command/introspection: which, Get-Syntax, Test-Command, ...
-│   ├── 22_functions_ansi.ps1    # ANSI/color utilities and demos
-│   ├── 23_functions_pkg.ps1     # package/module search: yays, Search-Modules, Search-Choco, ...
-│   ├── 24_functions_system.ps1  # system/admin: transcript, ssh helpers, Update-Windows, Reload-Profile
-│   ├── 30_psreadline.ps1        # PSReadLine OPTIONS: vi edit mode, prediction, history path, vi cursor
+│   ├── 10_ascii_art.ps1         # source ascii-art.ps1; random startup banner
+│   ├── 20_functions.ps1         # loader: dot-sources every pwsh.d/functions/*.ps1
+│   ├── 26_completion.ps1        # tab-completion integrations (Chocolatey)
+│   ├── 30_psreadline.ps1        # PSReadLine OPTIONS: vi edit mode, prediction, history path
 │   ├── 40_prompt.ps1            # prompt() + git status segment
-│   └── 50_keybindings.ps1       # PSReadLine KEY BINDINGS (Set-PSReadLineKeyHandler)
+│   ├── 50_keybindings.ps1       # PSReadLine KEY BINDINGS (Set-PSReadLineKeyHandler)
+│   └── functions/               # one file per function (loaded by 20_functions.ps1)
+│       ├── ls.ps1               #   l / ll / sl
+│       ├── touch.ps1  e.ps1  cdp.ps1  Search-Item.ps1
+│       ├── which.ps1  Get-Syntax.ps1  Test-Command.ps1  ...
+│       ├── Reload-Profile.ps1   #   reload / ez
+│       ├── Start_PSTranscript.ps1  ssh-local.ps1  Update-Windows.ps1  ...
+│       └── (ANSI/color, package-search, sysinfo helpers, ...)
 ├── local-modules/               # vendored modules loaded by path at startup
 └── Modules/                     # installed modules (PowerShellGet)
 ```
+
+> **Adding a function:** drop a `<Name>.ps1` into `pwsh.d/functions/`. The
+> `20_functions.ps1` loader sources every file there in sorted order, so it is
+> picked up automatically — no need to edit the loader. Inline `Set-Alias`
+> trailers live in the same file as their function.
+
 
 > **Options vs. keybindings:** PSReadLine *options/preferences* (edit mode,
 > prediction, history path, cursor) live in `30_psreadline.ps1`. Actual key

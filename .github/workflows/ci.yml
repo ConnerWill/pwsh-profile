@@ -24,11 +24,16 @@ jobs:
         shell: pwsh
         run: |
           # Only lint first-party, git-tracked files (skip vendored module trees).
-          $files = git ls-files '*.ps1' '*.psm1' '*.psd1' |
-            Where-Object { $_ -notmatch '^(local-modules|Modules)/' }
+          $files = @(git ls-files '*.ps1' '*.psm1' '*.psd1' |
+            Where-Object { $_ -notmatch '^(local-modules|Modules)/' })
 
-          $results = Invoke-ScriptAnalyzer -Path $files `
-            -Settings ./PSScriptAnalyzerSettings.psd1
+          Write-Host "Analyzing $($files.Count) files..."
+
+          # Analyze each file individually and aggregate (robust vs -Path array
+          # quirks when the set is a single item).
+          $results = foreach ($f in $files) {
+            Invoke-ScriptAnalyzer -Path $f -Settings ./PSScriptAnalyzerSettings.psd1
+          }
 
           if ($results) {
             $results | Format-Table -AutoSize | Out-String | Write-Host
@@ -97,11 +102,15 @@ jobs:
           & "$dest/install-pwshprofile.ps1" -SkipClone
 
           Write-Host "`n--- Loading profile in a fresh pwsh session ---"
-          $out = pwsh -Command "if (`$?) { 'STARTED' }; prompt | Out-Null; 'PROFILE LOADED OK'"
-          $out | Write-Host
-          if ($out -notmatch 'PROFILE LOADED OK') {
+          # Launch a real session (loads the profile), then verify a known
+          # profile command exists. Use the exit code as the signal rather than
+          # string-matching the profile's own startup output.
+          pwsh -Command "if (Get-Command Reload-Profile -ErrorAction Ignore) { exit 0 } else { Write-Error 'Reload-Profile not defined -> profile did not load'; exit 1 }"
+          if ($LASTEXITCODE -ne 0) {
             Write-Error "Profile did not load cleanly in the container."
             exit 1
           }
+          Write-Host "PROFILE LOADED OK"
+
 
 

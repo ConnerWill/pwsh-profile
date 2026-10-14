@@ -19,6 +19,15 @@
         'PSAvoidOverwritingBuiltInCmdlets',
         # Plain-text handling is fine here; no credential plumbing.
         'PSAvoidUsingPlainTextForPassword',
-        'PSUsePSCredentialType'
+        'PSUsePSCredentialType',
+        # One-file-per-function layout means PSSA analyzes each function in
+        # isolation, so cross-scope vars/params look "unused". These are style
+        # heuristics that produce false positives in this structure.
+        'PSUseDeclaredVarsMoreThanAssignments',
+        'PSReviewUnusedParameter',
+        # $global:PSReadLineMarks etc. are intentional interactive globals.
+        'PSAvoidGlobalVars',
+        # ASCII-art / glyph files don't need a UTF-8 BOM.
+        'PSUseBOMForUnicodeEncodedFile'
     )
 }
