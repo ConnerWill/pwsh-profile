@@ -107,7 +107,7 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 ### Start a new PowerShell 7 session
 
-Open a new `pwsh` window (or run `reload` in an existing one). You should see
+Open a new `pwsh` window (or run `reload` / `ez` in an existing one). You should see
 the module-load line, a random ASCII banner, and the git-aware prompt.
 
 ### Personal / machine-local overrides
@@ -132,7 +132,7 @@ $ShowStartupArt = $true
 ```powershell
 cd "$HOME\Documents\PowerShell"
 git pull
-reload   # or open a new shell
+reload   # or 'ez', or open a new shell
 ```
 
 ---
@@ -291,7 +291,7 @@ problems. If you ever see stray `^M`, convert a file to CRLF:
 - Add a new function group as `pwsh.d/NN_<name>.ps1`; it loads automatically.
 - Keep anything that must exist before fragments (e.g. `$PDOTDDIR`, the color
   palette) in `profile.ps1`.
-- After edits, run `reload` to apply without opening a new shell.
+- After edits, run `reload` (or `ez`) to apply without opening a new shell.
 - Validate a fragment parses:
   ```powershell
   $e=$null; [System.Management.Automation.Language.Parser]::ParseFile(
