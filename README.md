@@ -114,12 +114,17 @@ the module-load line, a random ASCII banner, and the git-aware prompt.
 
 Anything private or machine-specific goes in `powershell-config.ps1` in the
 profile directory. It is **gitignored** and dot-sourced early at startup, so it
-never ends up in the repo. Example:
+never ends up in the repo. Use it to set custom variables — for example, your
+preferred editor:
 
 ```powershell
 # powershell-config.ps1
-function ssh-local-vm { ssh-local -User me -Hostname localhost -Port 2222 }
+
+# Pick your editor (used by the `e` function): vim, nvim, code, notepad++, ...
 $EDITOR = 'code'
+
+# Turn the startup ASCII banner on or off.
+$ShowStartupArt = $true
 ```
 
 ### Updating
