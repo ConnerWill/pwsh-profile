@@ -9,6 +9,8 @@
 ##  See README.md for the full layout.
 ##############################################################################
 
+#Requires -Version 7.0
+
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 
@@ -31,7 +33,6 @@ read_config
 ##############################################################################
 ###{{{ COLORS (used by the message helpers and module/pwsh.d loaders below)
 
-#Requires -Version 6.0
 if ($PSVersionTable.PSVersion.Major -ge 6){
 #$ColorTable = @{
     $color_reset = "`e[0m"

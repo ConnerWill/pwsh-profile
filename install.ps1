@@ -1,4 +1,4 @@
-#Requires -Version 6.0
+#Requires -Version 7.0
 <#
 .SYNOPSIS
   Bootstrap / setup for the pwsh-profile.
