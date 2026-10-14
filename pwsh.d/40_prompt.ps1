@@ -117,7 +117,8 @@ Function prompt {
 
   # User/host: prefer Windows vars, fall back to Linux ($USER / hostname) so the
   # prompt is correct cross-platform (and in containers).
-  $PromptUserName    = if ($env:USERNAME) { $env:USERNAME } else { $env:USER }
+  # User/host via reliable .NET APIs (env vars can be unset in containers/non-login shells).
+  $PromptUserName    = if ($env:USERNAME) { $env:USERNAME } elseif ($env:USER) { $env:USER } else { [System.Environment]::UserName }
   $PromptHostName    = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Environment]::MachineName }
   $PromptPWD         = "$PWD"
   $PromptDate        = "($(Get-Date -UFormat '%Y-%m-%d %H:%M:%S'))"
