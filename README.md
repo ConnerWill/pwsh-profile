@@ -20,7 +20,14 @@
 - [Layout](#layout)
 - [Load order](#load-order)
 - [The prompt](#the-prompt)
-- [Handy commands](#handy-commands)
+- [Functions](#functions)
+  - [Filesystem / navigation](#filesystem--navigation)
+  - [Command / introspection](#command--introspection)
+  - [Color / ANSI](#color--ansi)
+  - [Package / module search](#package--module-search)
+  - [System / admin](#system--admin)
+  - [Host / system info](#host--system-info)
+  - [Misc](#misc)
 - [Line endings (CRLF)](#line-endings-crlf)
 - [Editing tips](#editing-tips)
 
@@ -157,42 +164,7 @@ Documents/PowerShell/
 │   ├── 30_psreadline.ps1        # PSReadLine OPTIONS: vi edit mode, prediction, history path
 │   ├── 40_prompt.ps1            # prompt() + git status segment
 │   ├── 50_keybindings.ps1       # PSReadLine KEY BINDINGS (Set-PSReadLineKeyHandler)
-│   └── functions/               # one file per function (loaded by 20_functions.ps1)
-│       │
-│       ├── Blink-Message.ps1
-│       ├── cdp.ps1
-│       ├── Convert-HexToAnsi.ps1
-│       ├── e.ps1
-│       ├── Encode-Command.ps1
-│       ├── Get-ANSIColors.ps1
-│       ├── Get-CmdletAlias.ps1
-│       ├── Get-CommandInfo.ps1
-│       ├── Get-PSWho.ps1
-│       ├── Get-Syntax.ps1
-│       ├── Get-WiFiPasswords.ps1
-│       ├── Get-WindowsVersion.ps1
-│       ├── Get-WindowsVersionString.ps1
-│       ├── Instort-Module.ps1
-│       ├── ls.ps1
-│       ├── Motd-AsciiArt.ps1
-│       ├── New-ANSIBar.ps1
-│       ├── New-RedGreenGradient.ps1
-│       ├── Out-ConditionalColor.ps1
-│       ├── Reload-Profile.ps1
-│       ├── Search-Choco.ps1
-│       ├── Search-Item.ps1
-│       ├── Search-Modules.ps1
-│       ├── Search-Script.ps1
-│       ├── Show-ANSISequence.ps1
-│       ├── Show-ColorList.ps1
-│       ├── Show-ColorTable.ps1
-│       ├── ssh-local.ps1
-│       ├── Start_PSTranscript.ps1
-│       ├── Test-Command.ps1
-│       ├── touch.ps1
-│       ├── Update-Windows.ps1
-│       ├── which.ps1
-│       └── yays.ps1
+│   └── functions/               # one file per function (see Functions section below)
 ├── local-modules/               # vendored modules loaded by path at startup
 └── Modules/                     # installed modules (PowerShellGet)
 ```
@@ -257,19 +229,81 @@ All prompt colors are composed from the named `$color_*` variables defined in
 
 ---
 
-## Handy commands
+## Functions
 
-| Command / alias        | Does                                                 |
-|------------------------|------------------------------------------------------|
-| `l`, `ll`, `sl`        | directory listings (colored via Get-ChildItemColor)  |
-| `touch <name>`         | create an empty file                                 |
-| `cdp`                  | cd to the profile directory                          |
-| `e [path]`             | open `$EDITOR` (notepad++); no path = open empty     |
-| `which <name>`         | show a function's ScriptBlock                         |
-| `Get-Syntax` / `synt`  | show a command's syntax                              |
-| `search` (Search-Item) | recursive filename search                            |
-| `Reload-Profile` / `reload` / `ez` | re-source the profile in place           |
-| `Get-PwSHKeybindings`  | list PSReadLine key handlers                         |
+Functions live in `pwsh.d/functions/` — one file per function, loaded by
+`20_functions.ps1`. Add one by dropping a `<Name>.ps1` into that directory.
+Aliases are shown in parentheses.
+
+### Filesystem / navigation
+
+| Function           | Description                                             |
+| ------------------ | ------------------------------------------------------- |
+| `l` / `ll` / `sl`  | Directory listings (colored via `Get-ChildItemColor`, with plain fallback) |
+| `cdp`              | `cd` to the profile directory                           |
+| `touch <name>`     | Create an empty file (like `touch` in Linux)            |
+| `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
+| `Search-Item` (`search`) | Recursive filename search from the current directory |
+
+### Command / introspection
+
+| Function              | Description                                          |
+| --------------------- | ---------------------------------------------------- |
+| `which <cmd>`         | Resolve a command — alias, function, cmdlet, or application (like `which`) |
+| `Get-Syntax` (`synt`, `syntax`) | Show a command's syntax                    |
+| `Get-CommandInfo`     | Return the `CommandInfo` for a command               |
+| `Get-CmdletAlias` (`aliases`) | List the aliases of a cmdlet                 |
+| `Test-Command` (`tcm`) | Check whether a command exists                      |
+| `Encode-Command`      | Base64-encode a command for `pwsh -EncodedCommand`   |
+
+### Color / ANSI
+
+| Function                | Description                                        |
+| ----------------------- | -------------------------------------------------- |
+| `Get-ANSIColors`        | Print the 256-color ANSI palette                   |
+| `Show-ColorTable`       | Print a foreground/background console-color table  |
+| `Show-ColorList`        | List console colors with their indices             |
+| `Show-ANSISequence`     | Display ANSI escape sequences (basic/fore/back/RGB)|
+| `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
+| `New-RedGreenGradient`  | Render a red→green gradient bar                     |
+| `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
+| `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
+| `Blink-Message`         | Print blinking colored text                        |
+
+### Package / module search
+
+| Function          | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| `yays`            | Search the PowerShell Gallery for modules               |
+| `Search-Modules`  | Interactive PowerShell module search                    |
+| `Search-Script`   | Interactive PowerShell script search                    |
+| `Search-Choco`    | Interactive Chocolatey package search                   |
+| `Instort-Module`  | Prompt for and install + import a module                |
+
+### System / admin
+
+| Function                  | Description                                     |
+| ------------------------- | ----------------------------------------------- |
+| `Reload-Profile` (`reload`, `ez`) | Re-source the profile in the current session |
+| `Start_PSTranscript`      | Start a session transcript (auto-run; prunes old logs) |
+| `ssh-local`               | SSH helper: `ssh-local -User <u> -Hostname <h> -Port <p>` |
+| `Get-WiFiPasswords`       | List saved Wi-Fi networks + passwords as a table |
+| `Update-Windows`          | Download and install Windows updates            |
+
+### Host / system info
+
+| Function                   | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `Get-PSWho` (`pswho`)      | Summary of user, elevation, OS, and PowerShell |
+| `Get-WindowsVersion` (`wver`) | Detailed Windows version/build info         |
+| `Get-WindowsVersionString` | One-line Windows version string                |
+
+### Misc
+
+| Function          | Description                                             |
+| ----------------- | ------------------------------------------------------- |
+| `Motd-AsciiArt`   | Print the startup ASCII banner (when `$ShowStartupArt`) |
+| `Get-PwSHKeybindings` | List all PSReadLine key handlers (defined in `50_keybindings.ps1`) |
 
 ---
 
