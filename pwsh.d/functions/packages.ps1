@@ -50,7 +50,7 @@ Function Find-Package {
         Write-Warning 'Chocolatey (choco) is not installed.'
         return
       }
-      choco search $Query --order-by-popularity --detailed --not-broken --page-size=25
+      choco search $Query --order-by=Popularity --detailed --not-broken --page-size=25
     }
   }
 }
