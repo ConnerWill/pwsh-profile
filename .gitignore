@@ -2,7 +2,7 @@
 Modules/
 
 # Reference material, not part of the active config.
-examples/
+extras/
 
 # Session backups created during edits.
 .profile-backup-*/
