@@ -1,8 +1,15 @@
-## cdp  --  from 20_functions_fs.ps1 (one-file-per-function layout)
+## cd / navigation helpers.
 
+## cd to the PowerShell profile directory.
 Function cdp(){
-  cd $(Split-Path -Path $PROFILE -Parent)
+  Set-Location (Split-Path -Path $PROFILE -Parent)
 }
 
-
-## which
+## Directory-up shortcuts (like zsh): typing dots alone walks up parents.
+##   ..     -> up 1      ...   -> up 2
+##   ....   -> up 3      ..... -> up 4
+## (Plain `.` is left alone -- current dir / dot-source operator.)
+Function ..    { Set-Location .. }
+Function ...   { Set-Location (Join-Path .. ..) }
+Function ....  { Set-Location (Join-Path .. (Join-Path .. ..)) }
+Function ..... { Set-Location (Join-Path .. (Join-Path .. (Join-Path .. ..))) }
