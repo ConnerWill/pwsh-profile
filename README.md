@@ -128,19 +128,45 @@ preferred editor:
 ```powershell
 # powershell-config.ps1
 
-# Pick your editor (used by the `e` function): vim, nvim, code, notepad++, ...
+# Editor used by the `e` function: vim, nvim, code, notepad++, kiro, ...
 $EDITOR = 'code'
 
-# Turn the startup ASCII banner on or off.
-$ShowStartupArt = $true
+# Startup output
+$ShowStartupArt = $true      # random ASCII banner
+$ShowModuleLoad = $true      # "Loading Modules: ..." line
 
-# Show / hide the "Loading Modules: ..." line at startup.
-$ShowModuleLoad = $true
+# Prompt
+$PROMPT_USERNAME     = 'me'      # force username (default: auto-detect)
+$PROMPT_HOSTNAME     = 'mybox'   # force hostname (default: auto-detect)
+$PROMPT_SHOW_HOSTNAME = $false   # show the hostname segment
+$PROMPT_SHOW_DATE     = $false   # show a timestamp segment
+$PROMPT_SHOW_GLYPH    = $true    # show the  pwsh glyph (set $false if no Nerd Font)
 
-# Force the username / hostname shown in the prompt (otherwise auto-detected).
-$PROMPT_USERNAME = 'me'
-$PROMPT_HOSTNAME = 'mybox'
+# Session transcript logging
+$PS_TRANSCRIPT_ENABLED = $true
+$PS_TRANSCRIPT_DIR     = "$env:LOCALAPPDATA\PowerShell\Transcripts"
+$PS_TRANSCRIPT_MAX     = 50       # keep newest N logs (0 = never prune)
 ```
+
+#### All configuration toggles
+
+| Variable | Default | Effect |
+| -------- | ------- | ------ |
+| `$EDITOR` | `notepad++.exe` | Editor launched by the `e` function |
+| `$ShowStartupArt` | `$true` | Show a random ASCII banner at startup |
+| `$ShowModuleLoad` | `$true` | Show the `Loading Modules: ...` line |
+| `$PROMPT_USERNAME` | auto | Force the username shown in the prompt |
+| `$PROMPT_HOSTNAME` | auto | Force the hostname shown in the prompt |
+| `$PROMPT_SHOW_HOSTNAME` | `$false` | Include the hostname segment in the prompt |
+| `$PROMPT_SHOW_DATE` | `$false` | Include a timestamp segment in the prompt |
+| `$PROMPT_SHOW_GLYPH` | `$true` | Show the `` pwsh glyph before the username |
+| `$PS_TRANSCRIPT_ENABLED` | `$true` | Record a session transcript on startup |
+| `$PS_TRANSCRIPT_DIR` | `…\PowerShell\Transcripts` | Where transcripts are written |
+| `$PS_TRANSCRIPT_MAX` | `50` | Max transcript logs to keep (0 = no pruning) |
+
+> `$ShowModuleLoad` and the `$PROMPT_*` values are read at startup, so set them
+> in `powershell-config.ps1` (which loads first). The rest use `??=`, so a value
+> set there also wins over the defaults.
 
 ### Updating
 

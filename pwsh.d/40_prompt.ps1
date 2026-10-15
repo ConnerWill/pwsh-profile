@@ -144,8 +144,12 @@ Function prompt {
   }
   $PromptDate        = "($(Get-Date -UFormat '%Y-%m-%d %H:%M:%S'))"
   $PromptRandomColor = Get-Random -Min 1 -Max 255
-  $UsePromptUserName          = $True; $UsePromptHostName        = $False
-  $UsePromptPWD               = $True; $UsePromptDate            = $False
+  # Prompt segment toggles. Hostname and date are off by default; override from
+  # powershell-config.ps1 with $PROMPT_SHOW_HOSTNAME / $PROMPT_SHOW_DATE.
+  $UsePromptUserName = $True
+  $UsePromptPWD      = $True
+  $UsePromptHostName = if ($null -ne $PROMPT_SHOW_HOSTNAME) { [bool]$PROMPT_SHOW_HOSTNAME } else { $False }
+  $UsePromptDate     = if ($null -ne $PROMPT_SHOW_DATE)     { [bool]$PROMPT_SHOW_DATE }     else { $False }
   $PromptAtSymbol             = " ";  $PromptSymbol             = ": "
   $PromptUserHostStartBracket = "[";   $PromptUserHostEndBracket = "]"
   $PromptPathStartBracket     = "[";   $PromptPathEndBracket     = "]"
@@ -166,12 +170,17 @@ Function prompt {
 
   $PromptGit = Get-GitPromptSegment
 
+  # The pwsh glyph before the username. Toggle with $PROMPT_SHOW_GLYPH in
+  # powershell-config.ps1 (set $false if your terminal font lacks the glyph).
+  $showGlyph = if ($null -ne $PROMPT_SHOW_GLYPH) { [bool]$PROMPT_SHOW_GLYPH } else { $true }
+  $GlyphSeg = if ($showGlyph) { "$($c.Glyph)󰨊 " } else { "" }
+
   # [ADMIN](date)[user host][path]:(repo)-[branch...]:   -- colors from $PromptColors
   $Prompt =
     "$($c.Admin)${AdminPrompt}" +
     "$($c.Date)${PromptDate}" +
     "$($c.Bracket)${PromptUserHostStartBracket}" +
-    "$($c.Glyph)󰨊 " +
+    "${GlyphSeg}" +
     "$($c.UserName)${PromptUserName}" +
     "$($c.AtSymbol)${PromptAtSymbol}" +
     "$($c.HostName)${PromptHostName}" +
