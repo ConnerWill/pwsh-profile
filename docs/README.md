@@ -312,6 +312,7 @@ Aliases are shown in parentheses.
 | `Get-ANSIColors`        | The 256-color block palette (= `Show-Colors -Style Blocks`) |
 | `Show-ColorList` / `Show-ColorTable` | Shortcuts for `Show-Colors -Style List` / `Table` |
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
+| `Show-RainbowLoadingBar` (`rainbow`) | Animated rainbow bar across the terminal width |
 | `draw_line`             | Draw a single full-width line in a given color (default green) |
 | `New-RedGreenGradient`  | Render a red→green gradient bar                     |
 | `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
