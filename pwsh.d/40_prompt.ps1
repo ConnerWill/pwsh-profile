@@ -24,12 +24,12 @@ $PromptColors = @{
   Reset     = ${color_reset}
   Admin     = "${color_reset}${color_bold}${color_red}"            # bold red    - [ADMIN]
   Date      = "${color_reset}${color_bold}${color_grey}"           # bold grey   - timestamp
-  Bracket   = "${color_reset}${color_violet}"                      # violet      - [ ] ( ) delimiters
-  Glyph     = "${color_reset}${color_bold}${color_blue}"           # blue - pwsh glyph
-  UserName  = "${color_reset}${color_bold}${color_cyan_bright}"    # bold cyan   - username
-  AtSymbol  = "${color_reset}${color_blue}"                        # blue        - user/host separator
-  HostName  = "${color_reset}${color_cyan_bright}"                 # cyan        - hostname
-  Path      = "${color_reset}${color_teal}"                        # teal        - current directory
+  Bracket   = "${color_reset}${color_bold}${color_cyan_bright}"    # bold cyan   - [ ] user/host/path brackets (zsh %F{51})
+  Glyph     = "${color_reset}${color_bold}${color_blue}"           # blue        - pwsh glyph
+  UserName  = "${color_reset}${color_violet}"                      # violet      - username (zsh %F{99})
+  AtSymbol  = "${color_reset}${color_magenta}"                     # magenta     - user/host separator (zsh %F{201})
+  HostName  = "${color_reset}${color_violet}"                      # violet      - hostname (zsh %F{99})
+  Path      = "${color_reset}${color_teal}"                        # teal        - current directory (zsh %F{66})
   GitClean  = "${color_reset}${color_bold}${color_green}"          # bold green  - clean branch / ⊕ added count
   GitDirty  = "${color_reset}${color_bold}${color_yellow}"         # bold yellow - dirty branch (tracked changes only)
   GitUntrk  = "${color_reset}${color_bold}${color_red}"            # bold red    - untracked files present
@@ -102,7 +102,11 @@ Function Get-GitPromptSegment {
   else                               { $gitColor = $PromptColors.GitClean }  # green
 
   $reset = $PromptColors.Reset
-  $paren = $PromptColors.Bracket
+  # zsh VCS scheme: ':' and '-' separators yellow (190), parens/brackets
+  # magenta (201), repo name white (15), branch color by state.
+  $sep   = "${color_reset}${color_yellow}"
+  $paren = "${color_reset}${color_magenta}"
+  $repoc = "${color_reset}${color_white}"
 
   # Counters (fixed per-kind colors): ⊕ staged/modified, ⊝ deleted, ⊛ untracked.
   $counts = ""
@@ -110,7 +114,8 @@ Function Get-GitPromptSegment {
   if ($deleted   -gt 0) { $counts += "${color_bold}${color_yellow}⊝${deleted}${reset}" }
   if ($untracked -gt 0) { $counts += "${color_bold}${color_red}⊛${untracked}${reset}" }
 
-  return "${paren}:($repo)-[${gitColor}${branch}${counts}${paren}]${reset}"
+  # :(repo)-[branch⊕N⊝N⊛N]   -- :/- yellow, () magenta, repo white, [] magenta
+  return "${sep}:${paren}(${repoc}${repo}${paren})${sep}-${paren}[${gitColor}${branch}${counts}${paren}]${reset}"
 }
 
 Function prompt {
