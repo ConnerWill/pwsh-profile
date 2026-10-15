@@ -1,34 +1,43 @@
 ## Show-Colors  --  one entry point for the color/ANSI demos.
-##   Ansi  (default) -> text attributes + 256-color fore/background palette
-##   List            -> the 16 console colors, one per line
-##   Table           -> every foreground on every background
-##   All             -> all of the above
-## (Get-ANSIColors stays its own standalone function.)
+##   Blocks (default) -> the 256-color block palette (was Get-ANSIColors)
+##   Ansi             -> text attributes + 256-color fore/background palette
+##   List             -> the 16 console colors, one per line
+##   Table            -> every foreground on every background
+##   All              -> all of the above
+## Get-ANSIColors is kept as a wrapper for 'Show-Colors -Style Blocks'.
 
 Function Show-Colors {
   <#
   .SYNOPSIS
-    Show color/ANSI references. Defaults to the ANSI style.
+    Show color/ANSI references. Defaults to the 256-color block palette.
   .PARAMETER Style
-    Ansi (default) / List / Table / All.
+    Blocks (default) / Ansi / List / Table / All.
   .EXAMPLE
     Show-Colors
   .EXAMPLE
-    Show-Colors -Style List
+    Show-Colors -Style Ansi
   .EXAMPLE
     Show-Colors -Style All
   #>
   [CmdletBinding()]
   param(
-    [ValidateSet('Ansi', 'List', 'Table', 'All')]
-    [string]$Style = 'Ansi'
+    [ValidateSet('Blocks', 'Ansi', 'List', 'Table', 'All')]
+    [string]$Style = 'Blocks'
   )
 
   $colors = [Enum]::GetValues([System.ConsoleColor])
   $e = "`e"
 
+  function Script:_ShowBlocks {
+    # 256-color block palette (formerly Get-ANSIColors).
+    for ($i = 0; $i -le 255; $i++) {
+      [Console]::Write(
+        "$e[0;1;38;5;${i}m▌║█║▌│║▌│║▌║▌█║$e[0;38;5;${i}m▌│║▌║▌│║║▌█║▌║█$e[0m`n"
+      )
+    }
+  }
+
   function Script:_ShowAnsi {
-    # Text attributes.
     Write-Host "`nAttributes:" -ForegroundColor Cyan
     $attrs = [ordered]@{ 1 = 'Bold'; 2 = 'Faint'; 3 = 'Italic'; 4 = 'Underline';
                          5 = 'Blink'; 7 = 'Reverse'; 9 = 'CrossedOut' }
@@ -37,7 +46,6 @@ Function Show-Colors {
     }
     Write-Host "`n"
 
-    # 256-color foreground palette.
     Write-Host "256-color foreground:" -ForegroundColor Cyan
     for ($i = 0; $i -le 255; $i++) {
       [Console]::Write(("$e[38;5;{0}m{0,4}$e[0m" -f $i))
@@ -45,7 +53,6 @@ Function Show-Colors {
     }
     Write-Host ""
 
-    # 256-color background palette.
     Write-Host "256-color background:" -ForegroundColor Cyan
     for ($i = 0; $i -le 255; $i++) {
       [Console]::Write(("$e[48;5;{0}m{0,4}$e[0m" -f $i))
@@ -72,13 +79,15 @@ Function Show-Colors {
   }
 
   switch ($Style) {
-    'Ansi'  { _ShowAnsi }
-    'List'  { _ShowList }
-    'Table' { _ShowTable }
-    'All'   { _ShowAnsi; _ShowList; _ShowTable }
+    'Blocks' { _ShowBlocks }
+    'Ansi'   { _ShowAnsi }
+    'List'   { _ShowList }
+    'Table'  { _ShowTable }
+    'All'    { _ShowBlocks; _ShowAnsi; _ShowList; _ShowTable }
   }
 }
 
-## Back-compat wrappers so the old names keep their exact behavior.
+## Back-compat wrappers so the old names keep working.
+Function Get-ANSIColors { Show-Colors -Style Blocks }
 Function Show-ColorList  { Show-Colors -Style List }
 Function Show-ColorTable { Show-Colors -Style Table }

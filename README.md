@@ -261,8 +261,8 @@ Aliases are shown in parentheses.
 
 | Function                | Description                                        |
 | ----------------------- | -------------------------------------------------- |
-| `Get-ANSIColors`        | Print the 256-color ANSI palette                   |
-| `Show-Colors`           | Color/ANSI reference: `-Style Ansi` (default) / `List` / `Table` / `All` |
+| `Show-Colors`           | Color/ANSI reference: `-Style Blocks` (default) / `Ansi` / `List` / `Table` / `All` |
+| `Get-ANSIColors`        | The 256-color block palette (= `Show-Colors -Style Blocks`) |
 | `Show-ColorList` / `Show-ColorTable` | Shortcuts for `Show-Colors -Style List` / `Table` |
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
 | `draw_line`             | Draw a single full-width line in a given color (default green) |
