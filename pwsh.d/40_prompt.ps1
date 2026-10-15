@@ -123,9 +123,16 @@ Function prompt {
 
   # User/host: prefer Windows vars, fall back to Linux ($USER / hostname) so the
   # prompt is correct cross-platform (and in containers).
-  # User/host via reliable .NET APIs (env vars can be unset in containers/non-login shells).
-  $PromptUserName    = if ($env:USERNAME) { $env:USERNAME } elseif ($env:USER) { $env:USER } else { [System.Environment]::UserName }
-  $PromptHostName    = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Environment]::MachineName }
+  # User/host. Override by setting $PROMPT_USERNAME / $PROMPT_HOSTNAME in
+  # powershell-config.ps1; otherwise auto-detect via env vars / .NET APIs
+  # (which handle containers / non-login shells where env vars are unset).
+  $PromptUserName = if ($PROMPT_USERNAME) { $PROMPT_USERNAME }
+                    elseif ($env:USERNAME) { $env:USERNAME }
+                    elseif ($env:USER)     { $env:USER }
+                    else { [System.Environment]::UserName }
+  $PromptHostName = if ($PROMPT_HOSTNAME) { $PROMPT_HOSTNAME }
+                    elseif ($env:COMPUTERNAME) { $env:COMPUTERNAME }
+                    else { [System.Environment]::MachineName }
   # Current directory, with the home dir collapsed to '~' (like zsh/bash).
   $PromptPWD = "$PWD"
   $homeDir = $HOME.TrimEnd('\','/')
