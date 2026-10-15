@@ -29,11 +29,13 @@ Function Show-Colors {
   $e = "`e"
 
   function Script:_ShowBlocks {
-    # 256-color block palette (formerly Get-ANSIColors).
+    # 256-color block palette (formerly Get-ANSIColors), now labeled with the
+    # color index and the literal escape sequence for that color.
+    $t = '`e'   # literal text for the ESC byte
     for ($i = 0; $i -le 255; $i++) {
-      [Console]::Write(
-        "$e[0;1;38;5;${i}m▌║█║▌│║▌│║▌║▌█║$e[0;38;5;${i}m▌│║▌║▌│║║▌█║▌║█$e[0m`n"
-      )
+      $bars = "$e[0;1;38;5;${i}m▌║█║▌│║▌│║▌║▌█║$e[0;38;5;${i}m▌│║▌║▌│║║▌█║▌║█$e[0m"
+      $label = "$e[38;5;${i}m{0,3}  $t[38;5;${i}m$e[0m" -f $i
+      [Console]::WriteLine("$bars  $label")
     }
   }
 
