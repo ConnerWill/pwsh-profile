@@ -21,7 +21,7 @@
 
 $PromptColors = @{
   Reset     = $($Colors.Reset)
-  Admin     = "$($Colors.Reset)$($Colors.Bold)$($Colors.Red)"            # bold red    - [ADMIN]
+  Admin     = "$($Colors.Reset)$($Colors.Bold)$($Colors.Underline)$($Colors.Blink)$($Colors.Red)"   # bold+underline+blink red - [ADMIN]
   Date      = "$($Colors.Reset)$($Colors.Bold)$($Colors.Grey)"           # bold grey   - timestamp
   Bracket   = "$($Colors.Reset)$($Colors.Bold)$($Colors.CyanBright)"    # bold cyan   - [ ] user/host/path brackets (zsh %F{51})
   Glyph     = "$($Colors.Reset)$($Colors.Bold)$($Colors.Blue)"           # blue        - pwsh glyph
