@@ -183,10 +183,35 @@ foreach ($m in $Modules) {
 }
 
 # -----------------------------------------------------------------------------
-# Done -- rainbow transition, then a brief "try it out" guide.
+# Done -- rainbow transition, then goodbye banner, then the "try it out" guide.
 # -----------------------------------------------------------------------------
 Show-RainbowBar 0.5
 
+# Centered goodbye banner (styled after the zsh installer's show_ascii_goodbye).
+$__cols = try { [Console]::WindowWidth } catch { 0 }
+if ($__cols -le 0) { $__cols = 80 }
+$__magenta = "`e[0;1;38;5;201m"
+$__green   = "`e[0;1;38;5;46m"
+
+Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
+
+$__goodbye = @'
+ +------+.      +------+       +------+       +------+      .+------+
+ |`.    | `.    |\     |\      |      |      /|     /|    .' |    .'|
+ |  `+--+---+   | +----+-+     +------+     +-+----+ |   +---+--+'  |
+ |   |  |   |   | |    | |     |      |     | |    | |   |   |  |   |
+ +---+--+.  |   +-+----+ |     +------+     | +----+-+   |  .+--+---+
+ `. |    `.|    \|     \|      |      |     |/     |/    |.'    | .'
+   `+------+     +------+      +------+      +------+     +------+'
+'@
+Write-CenteredBlock $__goodbye $__green
+Write-CenteredBlock 'GOODBYE :)' "`e[0;1;3;38;5;201m"
+
+Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
+
+Remove-Variable __cols, __magenta, __green, __goodbye -ErrorAction Ignore
+
+# "Try it out" guide -- shown last.
 $e = "`e"
 $c = @{
   reset = "$e[0m"; bold = "$e[1m"; ul = "$e[4m"; it = "$e[3m"
@@ -223,29 +248,3 @@ $($c.bold)$($c.it)$($c.orange)  Docs: $($c.green)https://github.com/ConnerWill/p
 "@
 
 Write-Host $guide
-
-# -----------------------------------------------------------------------------
-# Centered goodbye banner (styled after the zsh installer's show_ascii_goodbye).
-# -----------------------------------------------------------------------------
-$__cols = try { [Console]::WindowWidth } catch { 0 }
-if ($__cols -le 0) { $__cols = 80 }
-$__magenta = "`e[0;1;38;5;201m"
-$__green   = "`e[0;1;38;5;46m"
-
-Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
-
-$__goodbye = @'
- +------+.      +------+       +------+       +------+      .+------+
- |`.    | `.    |\     |\      |      |      /|     /|    .' |    .'|
- |  `+--+---+   | +----+-+     +------+     +-+----+ |   +---+--+'  |
- |   |  |   |   | |    | |     |      |     | |    | |   |   |  |   |
- +---+--+.  |   +-+----+ |     +------+     | +----+-+   |  .+--+---+
- `. |    `.|    \|     \|      |      |     |/     |/    |.'    | .'
-   `+------+     +------+      +------+      +------+     +------+'
-'@
-Write-CenteredBlock $__goodbye $__green
-Write-CenteredBlock 'GOODBYE :)' "`e[0;1;3;38;5;201m"
-
-Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
-
-Remove-Variable __cols, __magenta, __green, __goodbye -ErrorAction Ignore
