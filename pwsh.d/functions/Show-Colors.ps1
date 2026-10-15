@@ -38,22 +38,34 @@ Function Show-Colors {
   }
 
   function Script:_ShowAnsi {
-    Write-Host "`nAttributes:" -ForegroundColor Cyan
+    # Shows the RENDERED sample AND the literal escape sequence you'd type.
+    # '\e' is the ESC byte (char 27); use "`e" in PowerShell double-quotes.
+    Write-Host "`nAttributes  (rendered  =  sequence):" -ForegroundColor Cyan
     $attrs = [ordered]@{ 1 = 'Bold'; 2 = 'Faint'; 3 = 'Italic'; 4 = 'Underline';
                          5 = 'Blink'; 7 = 'Reverse'; 9 = 'CrossedOut' }
     foreach ($a in $attrs.GetEnumerator()) {
-      [Console]::Write("$e[$($a.Key)m$($a.Value)$e[0m  ")
+      $rendered = "$e[$($a.Key)m$($a.Value)$e[0m"
+      $literal  = "\e[$($a.Key)m"
+      "{0,-28} = {1}" -f $rendered, $literal
     }
-    Write-Host "`n"
 
-    Write-Host "256-color foreground:" -ForegroundColor Cyan
+    Write-Host "`n256-color foreground  (rendered  =  sequence):" -ForegroundColor Cyan
+    foreach ($i in 0, 1, 2, 9, 15, 33, 46, 196, 201, 208, 226, 244) {
+      $rendered = "$e[38;5;${i}m  sample  $e[0m"
+      "{0,-30} = \e[38;5;{1}m" -f $rendered, $i
+    }
+    Write-Host "  ... (any 0-255; use \e[38;5;Nm for fg, \e[48;5;Nm for bg)" -ForegroundColor DarkGray
+
+    Write-Host "`nTruecolor (RGB) example:" -ForegroundColor Cyan
+    "{0,-30} = \e[38;2;R;G;Bm" -f "$e[38;2;80;145;254m  sample  $e[0m"
+
+    Write-Host "`nFull 256 fg palette:" -ForegroundColor Cyan
     for ($i = 0; $i -le 255; $i++) {
       [Console]::Write(("$e[38;5;{0}m{0,4}$e[0m" -f $i))
       if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
     }
-    Write-Host ""
 
-    Write-Host "256-color background:" -ForegroundColor Cyan
+    Write-Host "`nFull 256 bg palette:" -ForegroundColor Cyan
     for ($i = 0; $i -le 255; $i++) {
       [Console]::Write(("$e[48;5;{0}m{0,4}$e[0m" -f $i))
       if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
