@@ -139,5 +139,42 @@ foreach ($m in $Modules) {
   }
 }
 
-Write-Host ""
-Write-Host "Setup complete. Open a new PowerShell 7 session (or run 'reload')." -ForegroundColor Green
+# -----------------------------------------------------------------------------
+# Done -- brief "try it out" guide (styled after the zsh installer).
+# -----------------------------------------------------------------------------
+$e = "`e"
+$c = @{
+  reset = "$e[0m"; bold = "$e[1m"; ul = "$e[4m"; it = "$e[3m"
+  cyan = "$e[38;5;51m"; green = "$e[38;5;46m"; grey = "$e[38;5;8m"
+  orange = "$e[38;5;208m"; white = "$e[38;5;15m"
+}
+
+$guide = @"
+
+$($c.bold)$($c.ul)$($c.cyan)Setup complete — a few things to try:$($c.reset)
+
+$($c.bold)$($c.green)  1. Reload / start a fresh session (loads everything):$($c.reset)
+$($c.cyan)       ez               $($c.grey)# or 'reload', or open a new pwsh$($c.reset)
+
+$($c.bold)$($c.green)  2. The prompt shows git status inside a repo:$($c.reset)
+$($c.cyan)       cd <a git repo>  $($c.grey)# branch + counts: green=clean, red=untracked...$($c.reset)
+
+$($c.bold)$($c.green)  3. Navigation:$($c.reset)
+$($c.cyan)       ..   ...   ....  $($c.grey)# go up 1 / 2 / 3 directories$($c.reset)
+$($c.cyan)       cd -             $($c.grey)# jump back to the previous directory$($c.reset)
+$($c.cyan)       cdp              $($c.grey)# cd to the profile directory$($c.reset)
+
+$($c.bold)$($c.green)  4. Try some functions:$($c.reset)
+$($c.cyan)       Get-ANSIColors   $($c.grey)# the 256-color block palette$($c.reset)
+$($c.cyan)       Show-Colors      $($c.grey)# color/ANSI reference (-Style List/Table/Ansi/All)$($c.reset)
+$($c.cyan)       touch f.txt      $($c.grey)# create an empty file$($c.reset)
+$($c.cyan)       which ez         $($c.grey)# resolve a command/alias/function$($c.reset)
+$($c.cyan)       Get-PwSHKeybindings  $($c.grey)# list PSReadLine key handlers$($c.reset)
+
+$($c.bold)$($c.it)$($c.orange)  Tip: run '$($c.cyan)e$($c.orange)' to open your editor (`$EDITOR).$($c.reset)
+$($c.bold)$($c.it)$($c.orange)  Tip: personal overrides go in '$($c.cyan)powershell-config.ps1$($c.orange)' (gitignored).$($c.reset)
+$($c.bold)$($c.it)$($c.orange)  Docs: $($c.green)https://github.com/ConnerWill/pwsh-profile$($c.reset)
+
+"@
+
+Write-Host $guide
