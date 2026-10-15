@@ -155,7 +155,7 @@ Function prompt {
                        elseif ($PROMPT_HOSTNAME)            { $True }
                        else                                 { $False }
   $UsePromptDate     = if ($null -ne $PROMPT_SHOW_DATE)     { [bool]$PROMPT_SHOW_DATE } else { $False }
-  $PromptAtSymbol             = " ";  $PromptSymbol             = ": "
+  $PromptAtSymbol             = "@";  $PromptSymbol             = ": "
   $PromptUserHostStartBracket = "[";   $PromptUserHostEndBracket = "]"
   $PromptPathStartBracket     = "[";   $PromptPathEndBracket     = "]"
   $AdminPromptTag             = "[ADMIN]"
