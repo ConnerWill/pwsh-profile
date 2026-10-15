@@ -276,11 +276,12 @@ Aliases are shown in parentheses.
 
 | Function          | Description                                             |
 | ----------------- | ------------------------------------------------------- |
-| `yays`            | Search the PowerShell Gallery for modules               |
-| `Search-Modules`  | Interactive PowerShell module search                    |
-| `Search-Script`   | Interactive PowerShell script search                    |
-| `Search-Choco`    | Interactive Chocolatey package search                   |
-| `Instort-Module`  | Prompt for and install + import a module                |
+| `Find-Package` (`fpkg`) | Search packages: `-Source Module` (default) / `Script` / `Choco` |
+| `Install-PSModule` (`ipsmod`) | Install (CurrentUser) + import a module, then list its commands |
+
+> Replaces the older `Search-Modules` / `Search-Script` / `Search-Choco` /
+> `yays` / `Instort-Module` helpers. The old names (except `yays`) remain as
+> aliases, so `Search-Modules` etc. still work.
 
 ### System / admin
 
