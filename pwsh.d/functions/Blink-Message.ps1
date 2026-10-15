@@ -25,9 +25,16 @@ function Blink-Message {
      (Default: Red Yellow DarkYellow Green DarkGreen DarkCyan Cyan Blue DarkBlue DarkMagenta Magenta White Black)
 
   .EXAMPLE
-    PS C:\> . Import-ModuleFile -File $function.FullName
+    Blink-Message "Attention!"
+    Blink the text using the default color cycle.
 
-    Imports the file stored in $function according to import policy
+  .EXAMPLE
+    Blink-Message "Saved" -Count 6 -Delay 150
+    Blink 6 times, 150ms per color.
+
+  .EXAMPLE
+    Blink-Message "Warning" -Colors Red,Yellow
+    Blink alternating between just red and yellow.
 
   .LINK
     https://social.technet.microsoft.com/forums/windowsserver/en-US/3e9585cf-bbed-4e8e-80ba-65fd0a3a71d5/flashing-text-in-powershell
@@ -61,13 +68,13 @@ function Blink-Message {
       [int]$Count = 12,
 
     [Parameter(
-      HelpMessage= "Enter the 'human name' for colors to loop through (e.g. Red Green Blue)",
-      ValueFromRemainingArguments = $True)]
+      HelpMessage= "Enter the 'human name' for colors to loop through (e.g. Red Green Blue)")]
       [ValidateNotNullOrEmpty()]
-      [SupportsWildcards()]
-      [Alias("colors","rgb")]
-      [ConsoleColor[]]$Colors #= @(Red, Yellow, DarkYellow, Green, DarkGreen, DarkCyan, Cyan, Blue, DarkBlue, DarkMagenta, Magenta, White)
-      #[System.ConsoleColor]$ForegroundColor #[System.ConsoleColor]$BackgroundColor
+      [Alias("rgb")]
+      [ConsoleColor[]]$Colors = @(
+        'Red','Yellow','DarkYellow','Green','DarkGreen','DarkCyan','Cyan',
+        'Blue','DarkBlue','DarkMagenta','Magenta','White'
+      )
   )
     $startColor = [Console]::ForegroundColor
     $startLeft  = [Console]::CursorLeft
