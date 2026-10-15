@@ -20,8 +20,9 @@
     - [Quick bootstrap (one-liner)](#quick-bootstrap-one-liner)
     - [Manual](#manual)
     - [Try it in Docker (throwaway)](#try-it-in-docker-throwaway)
-    - [(Optional) Allow local script execution](#optional-allow-local-script-execution)
     - [Start a new PowerShell 7 session](#start-a-new-powershell-7-session)
+    - [Installation Troubleshooting](#installation-troubleshooting)
+      - [Allow local script execution](#allow-local-script-execution)
     - [Personal / machine-local overrides](#personal-machine-local-overrides)
       - [All configuration toggles](#all-configuration-toggles)
     - [Updating](#updating)
@@ -129,18 +130,20 @@ docker run -it --rm mcr.microsoft.com/powershell:latest bash -c "apt-get update 
 > (`~/.config/powershell` on Linux) and installs modules. Nothing on your host
 > is touched — the container is removed on exit (`--rm`).
 
-### (Optional) Allow local script execution
+### Start a new PowerShell 7 session
+
+Open a new `pwsh` window (or run `reload` / `ez` in an existing one). You should see
+the module-load line, a random ASCII banner, and the git-aware prompt.
+
+### Installation Troubleshooting
+
+#### Allow local script execution
 
 If the profile is blocked from running:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
-
-### Start a new PowerShell 7 session
-
-Open a new `pwsh` window (or run `reload` / `ez` in an existing one). You should see
-the module-load line, a random ASCII banner, and the git-aware prompt.
 
 ### Personal / machine-local overrides
 
