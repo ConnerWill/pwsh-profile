@@ -25,6 +25,7 @@ $PromptColors = @{
   Admin     = "${color_reset}${color_bold}${color_red}"            # bold red    - [ADMIN]
   Date      = "${color_reset}${color_bold}${color_grey}"           # bold grey   - timestamp
   Bracket   = "${color_reset}${color_violet}"                      # violet      - [ ] ( ) delimiters
+  Glyph     = "${color_reset}${color_bold}${color_powershell}"     # PowerShell blue - pwsh glyph
   UserName  = "${color_reset}${color_bold}${color_cyan_bright}"    # bold cyan   - username
   AtSymbol  = "${color_reset}${color_blue}"                        # blue        - user/host separator
   HostName  = "${color_reset}${color_cyan_bright}"                 # cyan        - hostname
@@ -150,6 +151,7 @@ Function prompt {
     "$($c.Admin)${AdminPrompt}" +
     "$($c.Date)${PromptDate}" +
     "$($c.Bracket)${PromptUserHostStartBracket}" +
+    "$($c.Glyph)󰨊 " +
     "$($c.UserName)${PromptUserName}" +
     "$($c.AtSymbol)${PromptAtSymbol}" +
     "$($c.HostName)${PromptHostName}" +

@@ -55,6 +55,7 @@ if ($PSVersionTable.PSVersion.Major -ge 6){
     $color_grey = "`e[38;5;8m"           ## dim grey (prompt timestamp)
     $color_violet = "`e[38;5;99m"        ## violet (prompt brackets/delimiters)
     $color_orange = "`e[38;5;208m"       ## orange (prompt git untracked)
+    $color_powershell = "`e[38;5;75m"    ## PowerShell brand blue (~#5391FE) for the pwsh glyph
 
     $bg_color_white = "`e[48;5;15m"
     $bg_color_black = "`e[48;5;0m"
