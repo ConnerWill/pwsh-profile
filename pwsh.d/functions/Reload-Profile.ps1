@@ -32,6 +32,9 @@ Function Reload-Profile(){
     Write-Host 'Reloading ...' -ForegroundColor Green
   }
 
+  # Brief pause so "Reloading ..." is actually visible before it's cleared.
+  Start-Sleep -Milliseconds 450
+
   # Move the cursor back up onto the "Reloading ..." line AND clear it, so the
   # fresh shell's output starts on a blank line with no leftover text (the
   # "Reloading ..." line is wider than the new output, so without the clear its
