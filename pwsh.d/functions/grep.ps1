@@ -8,16 +8,17 @@ Function grep {
 
   .DESCRIPTION
     Search piped input, one or more files, or recurse a directory tree.
-    Mirrors the common grep flags so muscle memory carries over:
-      -r / -R   recurse into directories
-      -i        case-insensitive
-      -v        invert match (lines that do NOT match)
-      -l        list only the names of files containing a match
-      -c        print only a count of matching lines
-      -n        prefix matches with their line number (default when searching files)
-      -w        match whole words only
-      -F        treat PATTERN as a literal string, not a regex
-      --include glob to restrict which files are searched when recursing
+    Mirrors the common grep flags so muscle memory carries over. Each short
+    flag also has a readable long-form alias (shown in parentheses):
+      -r / -R   recurse into directories            (-Recurse / -Recursive)
+      -i        case-insensitive                     (-IgnoreCase)
+      -v        invert match (lines that do NOT match)(-Invert / -InvertMatch)
+      -l        list only the names of matching files (-FilesWithMatches / -List)
+      -c        print only a count of matching lines  (-Count)
+      -n        prefix matches with their line number (-LineNumber)
+      -w        match whole words only                (-Word / -WordRegexp)
+      -F        treat PATTERN as a literal string      (-Fixed / -FixedStrings)
+      -include  glob to restrict which files are searched when recursing (-Include)
 
   .PARAMETER Pattern
     Regex (or literal string with -F) to search for.
@@ -47,15 +48,15 @@ Function grep {
     [Parameter(Position = 1, ValueFromRemainingArguments)]
     [string[]]$Path,
 
-    [switch]$r,                      # recurse (-r or -R; names are case-insensitive)
-    [switch]$i,                      # case-insensitive
-    [switch]$v,                      # invert match
-    [switch]$l,                      # files-with-matches only
-    [switch]$c,                      # count only
-    [switch]$n,                      # show line numbers
-    [switch]$w,                      # whole word
-    [switch]$F,                      # fixed/literal string
-    [string]$include = '*',          # file glob when recursing
+    [Alias('Recurse', 'Recursive')]        [switch]$r,   # recurse (-r / -R)
+    [Alias('IgnoreCase')]                  [switch]$i,   # case-insensitive
+    [Alias('Invert', 'InvertMatch')]       [switch]$v,   # invert match
+    [Alias('FilesWithMatches', 'List')]    [switch]$l,   # files-with-matches only
+    [Alias('Count')]                       [switch]$c,   # count only
+    [Alias('LineNumber')]                  [switch]$n,   # show line numbers
+    [Alias('Word', 'WordRegexp')]          [switch]$w,   # whole word
+    [Alias('Fixed', 'FixedStrings')]       [switch]$F,   # fixed/literal string
+    [string]$Include = '*',   # file glob when recursing (-Include)
 
     [Parameter(ValueFromPipeline)]
     [string[]]$InputObject
@@ -84,13 +85,13 @@ Function grep {
       if ($Path) {
         $files =
           if ($r) {
-            Get-ChildItem -Path $Path -Recurse -File -Filter $include -ErrorAction SilentlyContinue
+            Get-ChildItem -Path $Path -Recurse -File -Filter $Include -ErrorAction SilentlyContinue
           }
           else {
             # Expand globs/dirs; a bare dir with no -r is searched non-recursively.
             Get-Item -Path $Path -ErrorAction SilentlyContinue | ForEach-Object {
               if ($_.PSIsContainer) {
-                Get-ChildItem -Path $_.FullName -File -Filter $include -ErrorAction SilentlyContinue
+                Get-ChildItem -Path $_.FullName -File -Filter $Include -ErrorAction SilentlyContinue
               }
               else { $_ }
             }
