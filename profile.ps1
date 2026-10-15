@@ -11,6 +11,27 @@
 
 #Requires -Version 7.0
 
+using namespace System.Management.Automation
+using namespace System.Management.Automation.Language
+
+##############################################################################
+###{{{ BOOTSTRAP VARIABLES (needed by the loaders below)
+
+$PDOTDIR  = Split-Path -Path $PROFILE.CurrentUserAllHosts
+$PDOTDDIR = Join-Path $PDOTDIR "pwsh.d"
+$POWERSHELLCONFIGFILE = Join-Path $PDOTDIR "powershell-config.ps1"
+
+## Optional machine-local overrides. Dot-sourced directly (NOT inside a
+## function) so variables like $EDITOR land in the profile scope and are
+## visible to the pwsh.d fragments.
+if (Test-Path -Path $POWERSHELLCONFIGFILE){ . $POWERSHELLCONFIGFILE }
+
+###}}} END BOOTSTRAP VARIABLES
+##############################################################################
+
+##############################################################################
+###{{{ COLORS (single source of truth; used by helpers / prompt / loaders)
+
 ## ANSI color palette (single source of truth). $Colors.<Key> -> escape string.
 if ($PSVersionTable.PSVersion.Major -ge 6){
   $Colors = @{
