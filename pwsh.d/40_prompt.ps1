@@ -10,30 +10,29 @@
 
 ## ---------------------------------------------------------------------------
 ## Prompt color palette.
-## Composed entirely from the shared $color_* variables defined in profile.ps1
+## Composed entirely from the shared $Colors hashtable defined in profile.ps1
 ## (single source of truth). The hues the prompt needs all have named entries
-## in the main color array: $color_cyan_bright (51), $color_teal (66),
-## $color_grey (8), $color_violet (99).
+## in $Colors: CyanBright (51), Teal (66), Grey (8), Violet (99).
 ##
 ## Reminder on the sequences: `e[0m = reset, `e[1m = bold, `e[38;5;Nm = 256-color
 ## foreground. A compound like `e[0;1;38;5;51m is reset+bold+color in one escape;
-## here we build the equivalent by concatenating $color_reset + $color_bold + hue.
+## here we build the equivalent by concatenating $Colors.Reset + $Colors.Bold + hue.
 ## ---------------------------------------------------------------------------
 
 $PromptColors = @{
-  Reset     = ${color_reset}
-  Admin     = "${color_reset}${color_bold}${color_red}"            # bold red    - [ADMIN]
-  Date      = "${color_reset}${color_bold}${color_grey}"           # bold grey   - timestamp
-  Bracket   = "${color_reset}${color_bold}${color_cyan_bright}"    # bold cyan   - [ ] user/host/path brackets (zsh %F{51})
-  Glyph     = "${color_reset}${color_bold}${color_blue}"           # blue        - pwsh glyph
-  UserName  = "${color_reset}${color_violet}"                      # violet      - username (zsh %F{99})
-  AtSymbol  = "${color_reset}${color_magenta}"                     # magenta     - user/host separator (zsh %F{201})
-  HostName  = "${color_reset}${color_violet}"                      # violet      - hostname (zsh %F{99})
-  Path      = "${color_reset}${color_teal}"                        # teal        - current directory (zsh %F{66})
-  GitClean  = "${color_reset}${color_bold}${color_green}"          # bold green  - clean branch / ⊕ added count
-  GitDirty  = "${color_reset}${color_bold}${color_yellow}"         # bold yellow - dirty branch (tracked changes only)
-  GitUntrk  = "${color_reset}${color_bold}${color_red}"            # bold red    - untracked files present
-  GitConf   = "${color_reset}${color_bold}${color_orange}"         # bold orange - merge conflicts
+  Reset     = $($Colors.Reset)
+  Admin     = "$($Colors.Reset)$($Colors.Bold)$($Colors.Red)"            # bold red    - [ADMIN]
+  Date      = "$($Colors.Reset)$($Colors.Bold)$($Colors.Grey)"           # bold grey   - timestamp
+  Bracket   = "$($Colors.Reset)$($Colors.Bold)$($Colors.CyanBright)"    # bold cyan   - [ ] user/host/path brackets (zsh %F{51})
+  Glyph     = "$($Colors.Reset)$($Colors.Bold)$($Colors.Blue)"           # blue        - pwsh glyph
+  UserName  = "$($Colors.Reset)$($Colors.Violet)"                      # violet      - username (zsh %F{99})
+  AtSymbol  = "$($Colors.Reset)$($Colors.Magenta)"                     # magenta     - user/host separator (zsh %F{201})
+  HostName  = "$($Colors.Reset)$($Colors.Violet)"                      # violet      - hostname (zsh %F{99})
+  Path      = "$($Colors.Reset)$($Colors.Teal)"                        # teal        - current directory (zsh %F{66})
+  GitClean  = "$($Colors.Reset)$($Colors.Bold)$($Colors.Green)"          # bold green  - clean branch / ⊕ added count
+  GitDirty  = "$($Colors.Reset)$($Colors.Bold)$($Colors.Yellow)"         # bold yellow - dirty branch (tracked changes only)
+  GitUntrk  = "$($Colors.Reset)$($Colors.Bold)$($Colors.Red)"            # bold red    - untracked files present
+  GitConf   = "$($Colors.Reset)$($Colors.Bold)$($Colors.Orange)"         # bold orange - merge conflicts
 }
 
 Function Get-GitPromptSegment {
@@ -104,15 +103,15 @@ Function Get-GitPromptSegment {
   $reset = $PromptColors.Reset
   # zsh VCS scheme: ':' and '-' separators yellow (190), parens/brackets
   # magenta (201), repo name white (15), branch color by state.
-  $sep   = "${color_reset}${color_yellow}"
-  $paren = "${color_reset}${color_magenta}"
-  $repoc = "${color_reset}${color_white}"
+  $sep   = "$($Colors.Reset)$($Colors.Yellow)"
+  $paren = "$($Colors.Reset)$($Colors.Magenta)"
+  $repoc = "$($Colors.Reset)$($Colors.White)"
 
   # Counters (fixed per-kind colors): ⊕ staged/modified, ⊝ deleted, ⊛ untracked.
   $counts = ""
-  if ($added     -gt 0) { $counts += "${color_bold}${color_green}⊕${added}${reset}" }
-  if ($deleted   -gt 0) { $counts += "${color_bold}${color_yellow}⊝${deleted}${reset}" }
-  if ($untracked -gt 0) { $counts += "${color_bold}${color_red}⊛${untracked}${reset}" }
+  if ($added     -gt 0) { $counts += "$($Colors.Bold)$($Colors.Green)⊕${added}${reset}" }
+  if ($deleted   -gt 0) { $counts += "$($Colors.Bold)$($Colors.Yellow)⊝${deleted}${reset}" }
+  if ($untracked -gt 0) { $counts += "$($Colors.Bold)$($Colors.Red)⊛${untracked}${reset}" }
 
   # :(repo)-[branch⊕N⊝N⊛N]   -- :/- yellow, () magenta, repo white, [] magenta
   return "${sep}:${paren}(${repoc}${repo}${paren})${sep}-${paren}[${gitColor}${branch}${counts}${paren}]${reset}"

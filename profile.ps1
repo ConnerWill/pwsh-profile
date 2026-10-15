@@ -11,64 +11,39 @@
 
 #Requires -Version 7.0
 
-using namespace System.Management.Automation
-using namespace System.Management.Automation.Language
-
-##############################################################################
-###{{{ BOOTSTRAP VARIABLES (needed by the loaders below)
-
-$PDOTDIR  = Split-Path -Path $PROFILE.CurrentUserAllHosts
-$PDOTDDIR = Join-Path $PDOTDIR "pwsh.d"
-$POWERSHELLCONFIGFILE = Join-Path $PDOTDIR "powershell-config.ps1"
-
-## Optional machine-local overrides, dot-sourced early if present.
-## Optional machine-local overrides. Dot-sourced directly (NOT inside a
-## function) so variables like $EDITOR land in the profile scope and are
-## visible to the pwsh.d fragments. (A function would trap them in its local
-## scope and they'd vanish on return.)
-if (Test-Path -Path $POWERSHELLCONFIGFILE){ . $POWERSHELLCONFIGFILE }
-
-###}}} END BOOTSTRAP VARIABLES
-##############################################################################
-
-##############################################################################
-###{{{ COLORS (used by the message helpers and module/pwsh.d loaders below)
-
+## ANSI color palette (single source of truth). $Colors.<Key> -> escape string.
 if ($PSVersionTable.PSVersion.Major -ge 6){
-#$ColorTable = @{
-    $color_reset = "`e[0m"
-    $color_bold = "`e[1m"
-    $color_italic = "`e[3m"
-    $color_underline = "`e[4m"
-    $color_blink = "`e[6m"
-
-    $color_white = "`e[38;5;15m"
-    $color_black = "`e[38;5;0m"
-    $color_red = "`e[38;5;196m"
-    $color_yellow = "`e[38;5;190m"
-    $color_green = "`e[38;5;46m"
-    $color_cyan = "`e[38;5;87m"
-    $color_blue = "`e[38;5;33m"
-    $color_magenta = "`e[38;5;201m"
-    $color_purple = "`e[38;5;93m"
-    $color_cyan_bright = "`e[38;5;51m"   ## brighter cyan (prompt user/host)
-    $color_teal = "`e[38;5;66m"          ## teal/slate (prompt path)
-    $color_grey = "`e[38;5;8m"           ## dim grey (prompt timestamp)
-    $color_violet = "`e[38;5;99m"        ## violet (prompt brackets/delimiters)
-    $color_orange = "`e[38;5;208m"       ## orange (prompt git untracked)
-
-    $bg_color_white = "`e[48;5;15m"
-    $bg_color_black = "`e[48;5;0m"
-    $bg_color_red = "`e[48;5;196m"
-    $bg_color_yellow = "`e[48;5;190m"
-    $bg_color_green = "`e[48;5;46m"
-    $bg_color_cyan = "`e[48;5;87m"
-    $bg_color_blue = "`e[48;5;33m"
-    $bg_color_magenta = "`e[48;5;201m"
-    $bg_color_purple = "`e[48;5;93m"
-#  }
+  $Colors = @{
+    Reset          = "`e[0m"
+    Bold           = "`e[1m"
+    Italic         = "`e[3m"
+    Underline      = "`e[4m"
+    Blink          = "`e[6m"
+    White          = "`e[38;5;15m"
+    Black          = "`e[38;5;0m"
+    Red            = "`e[38;5;196m"
+    Yellow         = "`e[38;5;190m"
+    Green          = "`e[38;5;46m"
+    Cyan           = "`e[38;5;87m"
+    Blue           = "`e[38;5;33m"
+    Magenta        = "`e[38;5;201m"
+    Purple         = "`e[38;5;93m"
+    CyanBright     = "`e[38;5;51m"
+    Teal           = "`e[38;5;66m"
+    Grey           = "`e[38;5;8m"
+    Violet         = "`e[38;5;99m"
+    Orange         = "`e[38;5;208m"
+    BgWhite        = "`e[48;5;15m"
+    BgBlack        = "`e[48;5;0m"
+    BgRed          = "`e[48;5;196m"
+    BgYellow       = "`e[48;5;190m"
+    BgGreen        = "`e[48;5;46m"
+    BgCyan         = "`e[48;5;87m"
+    BgBlue         = "`e[48;5;33m"
+    BgMagenta      = "`e[48;5;201m"
+    BgPurple       = "`e[48;5;93m"
+  }
 }
-
 ###}}} END COLORS
 ##############################################################################
 
@@ -95,11 +70,11 @@ function is_admin {
 
 # messages
 function abort($msg, [int] $exit_code=1) { write-host $msg -f red; exit $exit_code }
-function error($msg){     Write-Output "${bg_color_red}${color_white}[ERROR]${color_reset}:   ${color_red}$msg${color_reset}"}
-function warn($msg){     Write-Output "${bg_color_yellow}${color_red}[WARNING]${color_reset}: ${color_yellow}$msg${color_reset}"}
-function info($msg){     Write-Output "${bg_color_blue}${color_white}[INFO]${color_reset}:    ${color_blue}$msg${color_reset}"}
-function debug($msg){   Write-Output "${bg_color_cyan}${color_yellow}[DEBUG]${color_reset}:   ${color_cyan}$msg${color_reset}"}
-function success($msg){ Write-Output "${bg_color_green}${color_white}[SUCCESS]${color_reset}: ${color_cyan}$msg${color_reset}"}
+function error($msg){     Write-Output "$($Colors.BgRed)$($Colors.White)[ERROR]$($Colors.Reset):   $($Colors.Red)$msg$($Colors.Reset)"}
+function warn($msg){     Write-Output "$($Colors.BgYellow)$($Colors.Red)[WARNING]$($Colors.Reset): $($Colors.Yellow)$msg$($Colors.Reset)"}
+function info($msg){     Write-Output "$($Colors.BgBlue)$($Colors.White)[INFO]$($Colors.Reset):    $($Colors.Blue)$msg$($Colors.Reset)"}
+function debug($msg){   Write-Output "$($Colors.BgCyan)$($Colors.Yellow)[DEBUG]$($Colors.Reset):   $($Colors.Cyan)$msg$($Colors.Reset)"}
+function success($msg){ Write-Output "$($Colors.BgGreen)$($Colors.White)[SUCCESS]$($Colors.Reset): $($Colors.Cyan)$msg$($Colors.Reset)"}
 
 ###}}} END CORE HELPERS
 ##############################################################################
