@@ -264,7 +264,6 @@ Aliases are shown in parentheses.
 | `Get-ANSIColors`        | Print the 256-color ANSI palette                   |
 | `Show-Colors`           | Color/ANSI reference: `-Style Ansi` (default) / `List` / `Table` / `All` |
 | `Show-ColorList` / `Show-ColorTable` | Shortcuts for `Show-Colors -Style List` / `Table` |
-| `Show-ANSISequence`     | ANSI escape-sequence reference (backs `Show-Colors -Style Ansi`) |
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
 | `draw_line`             | Draw a single full-width line in a given color (default green) |
 | `New-RedGreenGradient`  | Render a red→green gradient bar                     |

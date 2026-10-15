@@ -1,5 +1,5 @@
 ## Show-Colors  --  one entry point for the color/ANSI demos.
-##   Ansi  (default) -> ANSI escape-sequence reference (via Show-ANSISequence)
+##   Ansi  (default) -> text attributes + 256-color fore/background palette
 ##   List            -> the 16 console colors, one per line
 ##   Table           -> every foreground on every background
 ##   All             -> all of the above
@@ -8,11 +8,11 @@
 Function Show-Colors {
   <#
   .SYNOPSIS
-    Show color/ANSI references. Defaults to the ANSI escape sequences.
+    Show color/ANSI references. Defaults to the ANSI style.
   .PARAMETER Style
     Ansi (default) / List / Table / All.
   .EXAMPLE
-    Show-Colors            # ANSI escape sequences
+    Show-Colors
   .EXAMPLE
     Show-Colors -Style List
   .EXAMPLE
@@ -25,6 +25,34 @@ Function Show-Colors {
   )
 
   $colors = [Enum]::GetValues([System.ConsoleColor])
+  $e = "`e"
+
+  function Script:_ShowAnsi {
+    # Text attributes.
+    Write-Host "`nAttributes:" -ForegroundColor Cyan
+    $attrs = [ordered]@{ 1 = 'Bold'; 2 = 'Faint'; 3 = 'Italic'; 4 = 'Underline';
+                         5 = 'Blink'; 7 = 'Reverse'; 9 = 'CrossedOut' }
+    foreach ($a in $attrs.GetEnumerator()) {
+      [Console]::Write("$e[$($a.Key)m$($a.Value)$e[0m  ")
+    }
+    Write-Host "`n"
+
+    # 256-color foreground palette.
+    Write-Host "256-color foreground:" -ForegroundColor Cyan
+    for ($i = 0; $i -le 255; $i++) {
+      [Console]::Write(("$e[38;5;{0}m{0,4}$e[0m" -f $i))
+      if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
+    }
+    Write-Host ""
+
+    # 256-color background palette.
+    Write-Host "256-color background:" -ForegroundColor Cyan
+    for ($i = 0; $i -le 255; $i++) {
+      [Console]::Write(("$e[48;5;{0}m{0,4}$e[0m" -f $i))
+      if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
+    }
+    Write-Host ""
+  }
 
   function Script:_ShowList {
     $max = ($colors | ForEach-Object { "$_ ".Length } | Measure-Object -Maximum).Maximum
@@ -33,6 +61,7 @@ Function Show-Colors {
       Write-Host "$color" -ForegroundColor $color
     }
   }
+
   function Script:_ShowTable {
     foreach ($bg in $colors) {
       foreach ($fg in $colors) {
@@ -43,14 +72,10 @@ Function Show-Colors {
   }
 
   switch ($Style) {
-    'Ansi'  { if (Get-Command Show-ANSISequence -EA Ignore) { Show-ANSISequence } else { _ShowList } }
+    'Ansi'  { _ShowAnsi }
     'List'  { _ShowList }
     'Table' { _ShowTable }
-    'All'   {
-      if (Get-Command Show-ANSISequence -EA Ignore) { Show-ANSISequence }
-      _ShowList
-      _ShowTable
-    }
+    'All'   { _ShowAnsi; _ShowList; _ShowTable }
   }
 }
 
