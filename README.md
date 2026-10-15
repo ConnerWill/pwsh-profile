@@ -247,6 +247,7 @@ Aliases are shown in parentheses.
 | `l` / `ll` / `sl`  | Directory listings (colored via `Get-ChildItemColor`, with plain fallback) |
 | `cdp`              | `cd` to the profile directory                           |
 | `..` / `...` / `....` / `.....` | Go up 1 / 2 / 3 / 4 parent directories    |
+| `cd -` / `cd \$OLDPWD` | Jump back to the previous directory (`\$OLDPWD` is tracked) |
 | `touch <name>`     | Create an empty file (like `touch` in Linux)            |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
