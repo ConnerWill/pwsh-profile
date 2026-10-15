@@ -292,6 +292,7 @@ Aliases are shown in parentheses.
 | `touch <name>`     | Create an empty file (like `touch` in Linux)            |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
+| `grep` (`rg`)      | Linux-style text search (`-r` recurse, `-i`, `-v`, `-l`, `-c`, `-n`, `-w`, `-F`, `--include`); searches files, directories, or piped input |
 
 ### Command / introspection
 
