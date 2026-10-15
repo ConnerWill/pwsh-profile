@@ -33,7 +33,7 @@ Function Reload-Profile(){
   } else {
     Write-Host 'Reloading ...' -ForegroundColor Green
   }
-  Start-Sleep -Milliseconds 350
+  Start-Sleep -Milliseconds 200
   [Console]::Write("`e[1A`r`e[2K")
 
   . $profilePath
