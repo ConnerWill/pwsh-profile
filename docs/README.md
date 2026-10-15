@@ -315,7 +315,7 @@ Aliases are shown in parentheses.
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
 | `Show-RainbowLoadingBar` (`rainbow`) | Animated rainbow bar across the terminal width |
 | `draw_line`             | Draw a single full-width line in a given color (default green) |
-| `New-RedGreenGradient`  | Render a red→green gradient bar                     |
+| `New-RedGreenGradient`  | Render a gradient bar between two colors (defaults red→green; `-StartColor`/`-EndColor` as `#RRGGBB`, plus `-Percent`/`-Step`/`-Character`) |
 | `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
 | `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
 | `Blink-Message`         | Print blinking colored text                        |
