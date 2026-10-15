@@ -38,37 +38,49 @@ Function Show-Colors {
   }
 
   function Script:_ShowAnsi {
-    # Shows the RENDERED sample AND the literal escape sequence you'd type.
-    # '\e' is the ESC byte (char 27); use "`e" in PowerShell double-quotes.
-    Write-Host "`nAttributes  (rendered  =  sequence):" -ForegroundColor Cyan
-    $attrs = [ordered]@{ 1 = 'Bold'; 2 = 'Faint'; 3 = 'Italic'; 4 = 'Underline';
-                         5 = 'Blink'; 7 = 'Reverse'; 9 = 'CrossedOut' }
-    foreach ($a in $attrs.GetEnumerator()) {
-      $rendered = "$e[$($a.Key)m$($a.Value)$e[0m"
-      $literal  = "\e[$($a.Key)m"
-      "{0,-28} = {1}" -f $rendered, $literal
+    # Faithful to the original Show-ANSISequence: print the LITERAL escape-code
+    # text (e.g. `e[1mBold`e[0m) *rendered in that very style*, so each line
+    # shows both what the sequence looks like AND the code itself.
+    # (Original used an Add-Border header that no longer exists -> plain header.)
+    $t = '`e'   # the literal text shown for the ESC byte
+
+    function _hdr($label) { Write-Host "`n--- $label ---" -ForegroundColor Cyan }
+
+    _hdr 'Basic Sequences'
+    $basic = [ordered]@{ 1='Bold'; 2='Faint'; 3='Italic'; 4='Underline';
+                         5='SlowBlink'; 6='RapidBlink'; 7='Reverse'; 9='CrossedOut' }
+    foreach ($b in $basic.GetEnumerator()) {
+      $seq = "$t[$($b.Key)m$($b.Value)$t[0m"      # literal text
+      [Console]::WriteLine("$e[$($b.Key)m$seq$e[0m")  # rendered in that style
     }
 
-    Write-Host "`n256-color foreground  (rendered  =  sequence):" -ForegroundColor Cyan
-    foreach ($i in 0, 1, 2, 9, 15, 33, 46, 196, 201, 208, 226, 244) {
-      $rendered = "$e[38;5;${i}m  sample  $e[0m"
-      "{0,-30} = \e[38;5;{1}m" -f $rendered, $i
+    _hdr 'Foreground (simple)'
+    foreach ($n in @(30..37) + @(90..97)) {
+      $seq = "$t[${n}mHello$t[0m"
+      [Console]::Write("$e[${n}m$seq$e[0m   ")
     }
-    Write-Host "  ... (any 0-255; use \e[38;5;Nm for fg, \e[48;5;Nm for bg)" -ForegroundColor DarkGray
+    Write-Host ""
 
-    Write-Host "`nTruecolor (RGB) example:" -ForegroundColor Cyan
-    "{0,-30} = \e[38;2;R;G;Bm" -f "$e[38;2;80;145;254m  sample  $e[0m"
-
-    Write-Host "`nFull 256 fg palette:" -ForegroundColor Cyan
+    _hdr '8-Bit Foreground'
     for ($i = 0; $i -le 255; $i++) {
-      [Console]::Write(("$e[38;5;{0}m{0,4}$e[0m" -f $i))
-      if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
+      $seq = "$t[38;5;${i}mHello$t[0m"
+      [Console]::Write("$e[38;5;${i}m$seq$e[0m  ")
+      if (($i + 1) % 4 -eq 0) { [Console]::Write("`n") }
     }
+    Write-Host ""
 
-    Write-Host "`nFull 256 bg palette:" -ForegroundColor Cyan
+    _hdr 'Background (simple)'
+    foreach ($n in @(40..47) + @(100..107)) {
+      $seq = "$t[${n}mHello$t[0m"
+      [Console]::Write("$e[1;${n}m$seq$e[0m   ")
+    }
+    Write-Host ""
+
+    _hdr '8-Bit Background'
     for ($i = 0; $i -le 255; $i++) {
-      [Console]::Write(("$e[48;5;{0}m{0,4}$e[0m" -f $i))
-      if (($i + 1) % 16 -eq 0) { [Console]::Write("`n") }
+      $seq = "$t[48;5;${i}mHello$t[0m"
+      [Console]::Write("$e[1;48;5;${i}m$seq$e[0m  ")
+      if (($i + 1) % 4 -eq 0) { [Console]::Write("`n") }
     }
     Write-Host ""
   }
