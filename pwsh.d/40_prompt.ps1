@@ -126,7 +126,15 @@ Function prompt {
   # User/host via reliable .NET APIs (env vars can be unset in containers/non-login shells).
   $PromptUserName    = if ($env:USERNAME) { $env:USERNAME } elseif ($env:USER) { $env:USER } else { [System.Environment]::UserName }
   $PromptHostName    = if ($env:COMPUTERNAME) { $env:COMPUTERNAME } else { [System.Environment]::MachineName }
-  $PromptPWD         = "$PWD"
+  # Current directory, with the home dir collapsed to '~' (like zsh/bash).
+  $PromptPWD = "$PWD"
+  $homeDir = $HOME.TrimEnd('\','/')
+  if ($homeDir -and ($PromptPWD -eq $homeDir)) {
+    $PromptPWD = '~'
+  }
+  elseif ($homeDir -and $PromptPWD.StartsWith($homeDir + [IO.Path]::DirectorySeparatorChar)) {
+    $PromptPWD = '~' + $PromptPWD.Substring($homeDir.Length)
+  }
   $PromptDate        = "($(Get-Date -UFormat '%Y-%m-%d %H:%M:%S'))"
   $PromptRandomColor = Get-Random -Min 1 -Max 255
   $UsePromptUserName          = $True; $UsePromptHostName        = $False
