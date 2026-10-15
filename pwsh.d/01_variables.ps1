@@ -1,9 +1,9 @@
 ## Loaded by profile.ps1 pwsh.d loader. General environment variables.
 ## (Loader-critical vars -- PDOTDIR/PDOTDDIR/POWERSHELLCONFIGFILE -- stay in profile.ps1.)
 ##
-## User-overridable settings use ??= so a value already set in
-## powershell-config.ps1 (dot-sourced earlier) wins. Hard '=' assignments are
-## fixed defaults.
+## User-overridable settings are written to $global: so that (a) a value set
+## earlier in powershell-config.ps1 wins, and (b) they refresh on an in-place
+## 'reload'/'ez'. Pattern: $global:X = $X ?? <default>  (existing value wins).
 
 ###{{{ VARIABLES
 
@@ -11,10 +11,9 @@ $XDG_CONFIG_HOME = "${HOME}\.config"       ## (Windows default: $env:LOCALAPPDAT
 $XDG_DATA_HOME   = "$env:LOCALAPPDATA"
 $DOTFILES        = "${HOME}\.dotfiles"
 
-## Editor used by the `e` function. Override in powershell-config.ps1.
-## Editor used by the `e` function. Default to notepad.exe (ships with every
-## Windows install); override in powershell-config.ps1 (e.g. code, nvim, kiro).
-$EDITOR ??= 'notepad.exe'
+## Editor used by the `e` function. Default notepad.exe (ships with Windows);
+## override in powershell-config.ps1 (e.g. code, nvim, kiro).
+$global:EDITOR = $EDITOR ?? 'notepad.exe'
 
 $HISTFILE = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt"
 
@@ -31,17 +30,16 @@ $USER      = $env:USERNAME
 $HOSTNAME  = $env:COMPUTERNAME
 
 ## Transcript preferences (consumed by Start_PSTranscript). Overridable.
-$PS_TRANSCRIPT_ENABLED ??= $True
-$PS_TRANSCRIPT_DIR     ??= "$XDG_DATA_HOME\PowerShell\Transcripts"
+$global:PS_TRANSCRIPT_ENABLED = $PS_TRANSCRIPT_ENABLED ?? $true
+$global:PS_TRANSCRIPT_DIR     = $PS_TRANSCRIPT_DIR     ?? "$XDG_DATA_HOME\PowerShell\Transcripts"
 ## Max transcript log files to keep (oldest are pruned). Set 0 to disable pruning.
-$PS_TRANSCRIPT_MAX     ??= 50
+$global:PS_TRANSCRIPT_MAX     = $PS_TRANSCRIPT_MAX     ?? 50
 
 ## Show ASCII art banner at startup (used by 10_ascii_art.ps1). Overridable.
-$ShowStartupArt ??= $true
+$global:ShowStartupArt = $ShowStartupArt ?? $true
 
-## Show the "Loading Modules: ..." line at startup. This is actually read in
-## profile.ps1 (before fragments load), so set it in powershell-config.ps1 to
-## override. Shown here for discoverability. Default: $true.
+## Show the "Loading Modules: ..." line at startup. Read in profile.ps1 (before
+## fragments load), so set it in powershell-config.ps1 to override. Default $true.
 # $ShowModuleLoad = $true
 
 ###}}} END VARIABLES

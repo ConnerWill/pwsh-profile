@@ -1,16 +1,16 @@
-## Reload-Profile  --  from 24_functions_system.ps1 (one-file-per-function layout)
+## Reload-Profile  --  re-source the profile in place (no process stacking).
 
 Function Reload-Profile(){
   <#
   .SYNOPSIS
-    Reload the shell by starting a fresh PowerShell session.
+    Reload the profile in the current session (in place).
   .DESCRIPTION
-    Dot-sourcing the profile from inside a function cannot push the profile's
-    variables (e.g. $EDITOR, $PROMPT_USERNAME, colors) into the global scope, so
-    an in-place reload silently drops them. Instead we start a brand-new
-    interactive pwsh (like 'exec zsh'/'ez' in zsh) and exit the current one when
-    it returns, guaranteeing every change in profile.ps1 / powershell-config.ps1
-    takes effect.
+    Dot-sources $PROFILE.CurrentUserAllHosts, which re-runs the pwsh.d loader --
+    refreshing functions, aliases, the prompt, PSReadLine handlers, and the
+    fragments. Done in place (no new process), so repeated reloads never stack
+    shells. NOTE: a function cannot push a re-sourced *variable* into global
+    scope, so the profile's user-overridable variables ($EDITOR, $PROMPT_*,
+    etc.) are declared $global: in 01_variables.ps1 so they refresh here too.
   .EXAMPLE
     Reload-Profile
   #>
@@ -18,31 +18,23 @@ Function Reload-Profile(){
   [Alias('reload','ez')]
   Param()
 
-  $pwshPath = (Get-Process -Id $PID).Path
-  if (-not $pwshPath) { $pwshPath = 'pwsh' }
+  $profilePath = $PROFILE.CurrentUserAllHosts
+  if (-not (Test-Path -Path $profilePath)) {
+    Write-Warning "Profile not found: $profilePath"
+    return
+  }
 
-  # Jump up one line and overwrite it with a centered "Reloading ...", matching
-  # the zsh 'ez' trick:  clear line, cursor up one, clear line, carriage return.
-  # (Scrollback is preserved; only the previous line is overwritten.)
+  # Overwrite the command line with a centered "Reloading ..." (zsh 'ez' trick:
+  # clear line, up one, clear, carriage return), pause so it's visible, then
+  # clear it again before re-sourcing so the reloaded output starts clean.
   [Console]::Write("`e[2K`e[1A`e[2K`r")
   if (Get-Command Write-Centered -ErrorAction Ignore) {
     Write-Centered 'Reloading ...' -Color 46
-  }
-  else {
+  } else {
     Write-Host 'Reloading ...' -ForegroundColor Green
   }
-
-  # Brief pause so "Reloading ..." is actually visible before it's cleared.
-  Start-Sleep -Milliseconds 450
-
-  # Move the cursor back up onto the "Reloading ..." line AND clear it, so the
-  # fresh shell's output starts on a blank line with no leftover text (the
-  # "Reloading ..." line is wider than the new output, so without the clear its
-  # tail would survive).
+  Start-Sleep -Milliseconds 350
   [Console]::Write("`e[1A`r`e[2K")
 
-  # Start a fresh interactive session in the same window, then exit this one
-  # so it behaves like a shell replacement.
-  & $pwshPath -NoLogo
-  exit
+  . $profilePath
 }
