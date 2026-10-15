@@ -69,6 +69,19 @@ function Show-RainbowBar([double]$Duration = 0.5) {
   finally { [Console]::Write("$e[0m$e[?25h`n") }
 }
 
+# Print a block of text with every line horizontally centered in the terminal.
+# $Color is an optional ANSI escape prefix applied to each line.
+function Write-CenteredBlock([string]$Text, [string]$Color = '') {
+  $cols = try { [Console]::WindowWidth } catch { 0 }
+  if ($cols -le 0) { $cols = 80 }
+  $reset = if ($Color) { "`e[0m" } else { '' }
+  foreach ($line in ($Text -split "`r?`n")) {
+    $pad = [int](($cols - $line.Length) / 2)
+    if ($pad -lt 0) { $pad = 0 }
+    Write-Host ((' ' * $pad) + $Color + $line + $reset)
+  }
+}
+
 Show-RainbowBar 0.5
 
 # -----------------------------------------------------------------------------
@@ -95,8 +108,9 @@ $__banner = @'
                                                          ..--:.
 '@
 $__bannerColor = Get-Random -Minimum 16 -Maximum 231
-Write-Host "`e[0;1;38;5;${__bannerColor}m$__banner`e[0m"
-Write-Host "`e[0;1;38;5;51m  pwsh-profile installer`e[0m`n"
+Write-CenteredBlock $__banner "`e[0;1;38;5;${__bannerColor}m"
+Write-CenteredBlock 'pwsh-profile installer' "`e[0;1;38;5;51m"
+Write-Host ''
 
 # Target = the CurrentUserAllHosts profile directory (handles OneDrive redirect).
 $ProfileDir = Split-Path -Path $PROFILE.CurrentUserAllHosts
@@ -205,3 +219,29 @@ $($c.bold)$($c.it)$($c.orange)  Docs: $($c.green)https://github.com/ConnerWill/p
 "@
 
 Write-Host $guide
+
+# -----------------------------------------------------------------------------
+# Centered goodbye banner (styled after the zsh installer's show_ascii_goodbye).
+# -----------------------------------------------------------------------------
+$__cols = try { [Console]::WindowWidth } catch { 0 }
+if ($__cols -le 0) { $__cols = 80 }
+$__magenta = "`e[0;1;38;5;201m"
+$__green   = "`e[0;1;38;5;46m"
+
+Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
+
+$__goodbye = @'
+ +------+.      +------+       +------+       +------+      .+------+
+ |`.    | `.    |\     |\      |      |      /|     /|    .' |    .'|
+ |  `+--+---+   | +----+-+     +------+     +-+----+ |   +---+--+'  |
+ |   |  |   |   | |    | |     |      |     | |    | |   |   |  |   |
+ +---+--+.  |   +-+----+ |     +------+     | +----+-+   |  .+--+---+
+ `. |    `.|    \|     \|      |      |     |/     |/    |.'    | .'
+   `+------+     +------+      +------+      +------+     +------+'
+'@
+Write-CenteredBlock $__goodbye $__green
+Write-CenteredBlock 'GOODBYE :)' "`e[0;1;3;38;5;201m"
+
+Write-Host ("$__magenta" + ('▀' * $__cols) + "`e[0m")
+
+Remove-Variable __cols, __magenta, __green, __goodbye -ErrorAction Ignore
