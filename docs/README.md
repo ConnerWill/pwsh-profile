@@ -1,6 +1,6 @@
 <div align="center">
 
-![PowerShell Prompt Image](./assets/powershell-prompt.png)
+![powershell prompt image](./assets/powershell-prompt.png)
 
 # POWERSHELL PROFILE
 
@@ -70,6 +70,12 @@ required modules.
 
 ### Quick bootstrap (one-liner)
 
+<div align="center">
+
+![install-pwshprofile screenshot](./assets/install-pwshprofile.png)
+
+</div>
+
 Run this in **PowerShell 7** — no manual clone needed. It downloads and runs
 `install-pwshprofile.ps1`, which clones the repo to your profile directory and installs the
 modules:
@@ -104,6 +110,12 @@ Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
 `PSReadLine`, `posh-git`, `Plaster`, `PSFunctionTools`.
 
 ### Try it in Docker (throwaway)
+
+<div align="center">
+
+![install-pwshprofile docker screenshot](./assets/install-pwshprofile-docker.png)
+
+</div>
 
 Spin up a disposable PowerShell 7 container, install `git`, run the bootstrap
 installer, then drop into a fresh `pwsh` session with the profile loaded:
