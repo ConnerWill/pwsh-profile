@@ -10,29 +10,39 @@
 
 ---
 
-## Contents
+## Table of Contents
 
-- [Overview](#overview)
-- [Installation](#installation)
-  - [Quick bootstrap (one-liner)](#quick-bootstrap-one-liner)
-  - [Manual](#manual)
-  - [Try it in Docker (throwaway)](#try-it-in-docker-throwaway)
-  - [Personal / machine-local overrides](#personal--machine-local-overrides)
-  - [Updating](#updating)
-- [Layout](#layout)
-- [Load order](#load-order)
-- [The prompt](#the-prompt)
-- [Functions](#functions)
-  - [Filesystem / navigation](#filesystem--navigation)
-  - [Command / introspection](#command--introspection)
-  - [Color / ANSI](#color--ansi)
-  - [Package / module search](#package--module-search)
-  - [System / admin](#system--admin)
-  - [Active Directory](#active-directory)
-  - [Host / system info](#host--system-info)
-  - [Misc](#misc)
-- [Line endings (CRLF)](#line-endings-crlf)
-- [Editing tips](#editing-tips)
+<!--toc:start-->
+- [POWERSHELL PROFILE](#powershell-profile)
+  - [Table of Contents](#table-of-contents)
+  - [Overview](#overview)
+  - [Installation](#installation)
+    - [Quick bootstrap (one-liner)](#quick-bootstrap-one-liner)
+    - [Manual](#manual)
+    - [Try it in Docker (throwaway)](#try-it-in-docker-throwaway)
+    - [(Optional) Allow local script execution](#optional-allow-local-script-execution)
+    - [Start a new PowerShell 7 session](#start-a-new-powershell-7-session)
+    - [Personal / machine-local overrides](#personal-machine-local-overrides)
+      - [All configuration toggles](#all-configuration-toggles)
+    - [Updating](#updating)
+  - [Layout](#layout)
+  - [Load order](#load-order)
+  - [The prompt](#the-prompt)
+    - [Git status colors](#git-status-colors)
+    - [Git count glyphs](#git-count-glyphs)
+  - [Functions](#functions)
+    - [Filesystem / navigation](#filesystem-navigation)
+    - [Command / introspection](#command-introspection)
+    - [Color / ANSI](#color-ansi)
+    - [Package / module search](#package-module-search)
+    - [System / admin](#system-admin)
+    - [Active Directory](#active-directory)
+    - [Host / system info](#host-system-info)
+    - [Misc](#misc)
+  - [Line endings (CRLF)](#line-endings-crlf)
+  - [Editing tips](#editing-tips)
+  - [Author](#author)
+<!--toc:end-->
 
 ---
 
@@ -405,14 +415,11 @@ problems. If you ever see stray `^M`, convert a file to CRLF:
 
 ## Author
 
-Repository
-: [pwsh-profile](https://github.com/ConnerWill/pwsh-profile)
-
 Author
 : `Conner Will`
 
-Website
-: [connerwill.com](https://connerwill.com)
+Repository
+: [pwsh-profile](https://github.com/ConnerWill/pwsh-profile)
 
 GitHub
 : [github/ConnerWill](https://github.com/ConnerWill)
