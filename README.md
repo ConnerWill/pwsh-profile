@@ -187,7 +187,7 @@ Documents/PowerShell/
 
 1. `profile.ps1`
    - Core variables (`$PDOTDIR`, `$PDOTDDIR`, `$EDITOR`, `$HISTFILE`, XDG paths, ...)
-   - `read_config` dot-sources `powershell-config.ps1` if present
+   - Dot-sources `powershell-config.ps1` (machine-local overrides) if present
    - Color palette (`$color_*`, `$bg_color_*`) — single source of truth for colors
    - Message helpers (`error`, `warn`, `info`, `debug`, `success`, `is_admin`)
    - Module loading (`Get-ChildItemColor`, `PSReadLine`, local-modules)

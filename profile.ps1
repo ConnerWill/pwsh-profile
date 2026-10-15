@@ -22,10 +22,11 @@ $PDOTDDIR = Join-Path $PDOTDIR "pwsh.d"
 $POWERSHELLCONFIGFILE = Join-Path $PDOTDIR "powershell-config.ps1"
 
 ## Optional machine-local overrides, dot-sourced early if present.
-function read_config(){
-  if (Test-Path -Path $POWERSHELLCONFIGFILE){ . $POWERSHELLCONFIGFILE }
-}
-read_config
+## Optional machine-local overrides. Dot-sourced directly (NOT inside a
+## function) so variables like $EDITOR land in the profile scope and are
+## visible to the pwsh.d fragments. (A function would trap them in its local
+## scope and they'd vanish on return.)
+if (Test-Path -Path $POWERSHELLCONFIGFILE){ . $POWERSHELLCONFIGFILE }
 
 ###}}} END BOOTSTRAP VARIABLES
 ##############################################################################
