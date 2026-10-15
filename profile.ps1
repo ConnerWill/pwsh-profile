@@ -101,6 +101,26 @@ function success($msg){ Write-Output "$($Colors.BgGreen)$($Colors.White)[SUCCESS
 ##############################################################################
 
 ##############################################################################
+###{{{ ASCII ART (shown first, before module loading)
+
+## Source ascii-art.ps1 (defines $Art) and show a random banner. Printed here
+## -- before modules -- so the art appears at the very top of startup.
+## $ShowStartupArt defaults on; set it $false in powershell-config.ps1 to hide.
+$__artFile = Join-Path $PDOTDIR 'ascii-art.ps1'
+if (Test-Path -Path $__artFile) { . $__artFile }
+$__showArt = if ($null -ne $ShowStartupArt) { [bool]$ShowStartupArt } else { $true }
+if ($__showArt -and $Art -is [hashtable] -and $Art.Count -gt 0) {
+  $__pick = $Art.Values | Get-Random
+  $__artColor = Get-Random -Minimum 16 -Maximum 231
+  Write-Output "`e[0;1;38;5;${__artColor}m$__pick`e[0m"
+  Remove-Variable __pick, __artColor -ErrorAction Ignore
+}
+Remove-Variable __artFile, __showArt -ErrorAction Ignore
+
+###}}} END ASCII ART
+##############################################################################
+
+##############################################################################
 ###{{{ MODULES
 
 Function Invoke-LoadPowerShellModules(){
