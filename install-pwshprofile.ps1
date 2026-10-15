@@ -47,6 +47,31 @@ if ($PSVersionTable.PSVersion.Major -lt 7) {
 }
 
 # -----------------------------------------------------------------------------
+# Embedded rainbow loading bar (self-contained -- the installer may run via
+# 'irm | iex' before the profile's Show-RainbowLoadingBar function exists).
+# -----------------------------------------------------------------------------
+function Show-RainbowBar([double]$Duration = 0.5) {
+  $cols = try { [Console]::WindowWidth } catch { 0 }
+  if ($cols -le 0) { $cols = 80 }
+  $delayMs = [int](($Duration * 1000) / $cols)
+  $e = "`e"
+  [Console]::Write("$e[?25l")
+  try {
+    for ($i = 0; $i -lt $cols; $i++) {
+      $n = if ($cols -gt 1) { [int]($i * 255 / ($cols - 1)) } else { 0 }
+      $h = [int][math]::Floor($n / 43); $f = $n - 43 * $h
+      $t = [int]($f * 255 / 43); $q = 255 - $t
+      $rgb = switch ($h) { 0 {255,$t,0} 1 {$q,255,0} 2 {0,255,$t} 3 {0,$q,255} 4 {$t,0,255} default {255,0,$q} }
+      [Console]::Write("$e[48;2;$($rgb[0]);$($rgb[1]);$($rgb[2])m ")
+      if ($delayMs -gt 0) { Start-Sleep -Milliseconds $delayMs }
+    }
+  }
+  finally { [Console]::Write("$e[0m$e[?25h`n") }
+}
+
+Show-RainbowBar 0.5
+
+# -----------------------------------------------------------------------------
 # Banner
 # -----------------------------------------------------------------------------
 $__banner = @'
@@ -140,8 +165,10 @@ foreach ($m in $Modules) {
 }
 
 # -----------------------------------------------------------------------------
-# Done -- brief "try it out" guide (styled after the zsh installer).
+# Done -- rainbow transition, then a brief "try it out" guide.
 # -----------------------------------------------------------------------------
+Show-RainbowBar 0.5
+
 $e = "`e"
 $c = @{
   reset = "$e[0m"; bold = "$e[1m"; ul = "$e[4m"; it = "$e[3m"
