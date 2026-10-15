@@ -188,7 +188,7 @@ Documents/PowerShell/
 ├── Microsoft.PowerShell_profile.ps1  # CurrentUserCurrentHost (intentionally empty)
 ├── powershell-config.ps1        # optional local overrides, dot-sourced early (may be empty)
 ├── install-pwshprofile.ps1       # bootstrap: clone repo + install modules (run manually)
-├── ascii-art.ps1                # ASCII art banners ($GRIMREAPER), sourced on demand
+├── ascii-art.ps1                # $Art hashtable of ASCII banners (random one shown at startup)
 ├── docs/                        # README + assets (this documentation)
 │   ├── README.md
 │   └── assets/
@@ -225,7 +225,7 @@ Documents/PowerShell/
 1. `profile.ps1`
    - Core variables (`$PDOTDIR`, `$PDOTDDIR`, `$EDITOR`, `$HISTFILE`, XDG paths, ...)
    - Dot-sources `powershell-config.ps1` (machine-local overrides) if present
-   - Color palette (`$color_*`, `$bg_color_*`) — single source of truth for colors
+   - Color palette (`$Colors` hashtable, e.g. `$Colors.Red`) — single source of truth for colors
    - Message helpers (`error`, `warn`, `info`, `debug`, `success`, `is_admin`)
    - Module loading (`Get-ChildItemColor`, `PSReadLine`, local-modules)
    - **pwsh.d loader** — dot-sources every `pwsh.d/*.ps1` sorted by name
@@ -269,8 +269,8 @@ the prompt shows.
 | `⊝N`  | deleted            | yellow |
 | `⊛N`  | untracked          | red    |
 
-All prompt colors are composed from the named `$color_*` variables defined in
-`profile.ps1`.
+All prompt colors are composed from the `$Colors` hashtable (e.g. `$Colors.Red`,
+`$Colors.CyanBright`) defined in `profile.ps1`.
 
 ---
 
@@ -333,7 +333,7 @@ Aliases are shown in parentheses.
 
 | Function                  | Description                                     |
 | ------------------------- | ----------------------------------------------- |
-| `Reload-Profile` (`reload`, `ez`) | Re-source the profile in the current session |
+| `Reload-Profile` (`reload`, `ez`) | Re-source the profile in place (no new process; refreshes functions, prompt, and config) |
 | `Start_PSTranscript`      | Start a session transcript (auto-run; prunes old logs) |
 | `ssh-local`               | SSH helper: `ssh-local -User <u> -Hostname <h> -Port <p>` |
 | `Get-WiFiPasswords`       | List saved Wi-Fi networks + passwords as a table |
