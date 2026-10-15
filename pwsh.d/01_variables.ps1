@@ -12,7 +12,9 @@ $XDG_DATA_HOME   = "$env:LOCALAPPDATA"
 $DOTFILES        = "${HOME}\.dotfiles"
 
 ## Editor used by the `e` function. Override in powershell-config.ps1.
-$EDITOR ??= 'notepad++.exe'
+## Editor used by the `e` function. Default to notepad.exe (ships with every
+## Windows install); override in powershell-config.ps1 (e.g. code, nvim, kiro).
+$EDITOR ??= 'notepad.exe'
 
 $HISTFILE = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt"
 
