@@ -69,16 +69,20 @@ function Show-RainbowBar([double]$Duration = 0.5) {
   finally { [Console]::Write("$e[0m$e[?25h`n") }
 }
 
-# Print a block of text with every line horizontally centered in the terminal.
+# Print a multi-line block horizontally centered as a WHOLE (same left pad on
+# every line, based on the widest line) so ASCII art keeps its internal shape.
 # $Color is an optional ANSI escape prefix applied to each line.
 function Write-CenteredBlock([string]$Text, [string]$Color = '') {
   $cols = try { [Console]::WindowWidth } catch { 0 }
   if ($cols -le 0) { $cols = 80 }
   $reset = if ($Color) { "`e[0m" } else { '' }
-  foreach ($line in ($Text -split "`r?`n")) {
-    $pad = [int](($cols - $line.Length) / 2)
-    if ($pad -lt 0) { $pad = 0 }
-    Write-Host ((' ' * $pad) + $Color + $line + $reset)
+  $lines = $Text -split "`r?`n"
+  $widest = ($lines | Measure-Object -Property Length -Maximum).Maximum
+  $pad = [int](($cols - $widest) / 2)
+  if ($pad -lt 0) { $pad = 0 }
+  $prefix = ' ' * $pad
+  foreach ($line in $lines) {
+    Write-Host ($prefix + $Color + $line + $reset)
   }
 }
 
