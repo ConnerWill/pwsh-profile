@@ -6,7 +6,7 @@
 ##  fragments. All behavior (variables, functions, prompt, PSReadLine,
 ##  keybindings, completion) lives in pwsh.d/*.ps1, loaded in filename order.
 ##
-##  See README.md for the full layout.
+##  See docs/README.md for the full layout.
 ##############################################################################
 
 #Requires -Version 7.0

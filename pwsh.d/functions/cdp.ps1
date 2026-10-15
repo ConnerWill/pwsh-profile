@@ -43,3 +43,31 @@ Function ..    { Set-Location .. }
 Function ...   { Set-Location (Join-Path .. ..) }
 Function ....  { Set-Location (Join-Path .. (Join-Path .. ..)) }
 Function ..... { Set-Location (Join-Path .. (Join-Path .. (Join-Path .. ..))) }
+
+## realpath (alias rp): resolve a path to its absolute, canonical form
+## (like 'realpath' in linux). Resolves .., ~, and relative paths. Works for
+## paths that don't exist yet, too. Defaults to the current directory.
+## ('rp' is a built-in alias for Remove-ItemProperty; drop it so ours wins.
+## Guarded so re-sourcing doesn't throw.)
+if (Get-Alias -Name rp -ErrorAction Ignore) { Remove-Alias -Name rp -Force }
+
+Function realpath {
+  [CmdletBinding()]
+  [Alias('rp')]
+  param(
+    [Parameter(Position = 0, ValueFromPipeline, ValueFromRemainingArguments)]
+    [string[]]$Path = @('.')
+  )
+  process {
+    foreach ($p in $Path) {
+      # Try a real resolve first (follows the provider / existing items)...
+      $resolved = Resolve-Path -LiteralPath $p -ErrorAction Ignore
+      if ($resolved) { $resolved.Path }
+      else {
+        # ...fall back to GetFullPath for not-yet-existing paths, resolved
+        # against the current directory.
+        [System.IO.Path]::GetFullPath((Join-Path (Get-Location).Path $p))
+      }
+    }
+  }
+}

@@ -1,5 +1,7 @@
 <div align="center">
 
+![PowerShell Prompt Image](./assets/powershell-prompt.png)
+
 # POWERSHELL PROFILE
 
 > *A modular PowerShell 7 profile and configuration.*
@@ -187,7 +189,9 @@ Documents/PowerShell/
 ├── powershell-config.ps1        # optional local overrides, dot-sourced early (may be empty)
 ├── install-pwshprofile.ps1       # bootstrap: clone repo + install modules (run manually)
 ├── ascii-art.ps1                # ASCII art banners ($GRIMREAPER), sourced on demand
-├── README.md
+├── docs/                        # README + assets (this documentation)
+│   ├── README.md
+│   └── assets/
 ├── pwsh.d/                      # auto-loaded config fragments (in filename order)
 │   ├── 01_variables.ps1         # environment variables (XDG paths, EDITOR, HISTFILE, ...)
 │   ├── 02_preferences.ps1       # shell preferences (UTF-8, ConciseView, telemetry opt-out)
@@ -284,6 +288,7 @@ Aliases are shown in parentheses.
 | `cdp`              | `cd` to the profile directory                           |
 | `..` / `...` / `....` / `.....` | Go up 1 / 2 / 3 / 4 parent directories    |
 | `cd -` / `cd \$OLDPWD` | Jump back to the previous directory (`\$OLDPWD` is tracked) |
+| `realpath` (`rp`) | Resolve a path to its absolute, canonical form (like `realpath`) |
 | `touch <name>`     | Create an empty file (like `touch` in Linux)            |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
