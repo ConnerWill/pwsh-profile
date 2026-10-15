@@ -1,6 +1,30 @@
 ## New-RedGreenGradient  --  from 22_functions_ansi.ps1 (one-file-per-function layout)
 
 Function New-RedGreenGradient {
+    <#
+    .SYNOPSIS
+      Build a red-to-green ANSI gradient bar string.
+    .DESCRIPTION
+      Produces a colored bar (24-bit ANSI) that transitions from red through
+      yellow to green. Useful for visualizing a percentage, health, or score.
+      The -Percent controls how far along the red->green ramp the bar goes.
+    .PARAMETER Percent
+      How far to fill the gradient, as a decimal 0.0-1.0 (default 1.0 = full green).
+    .PARAMETER Step
+      Relative bar length / smoothness, 2-10. Smaller = longer, smoother bar
+      (default 5).
+    .PARAMETER Character
+      The character used to draw the bar (default full block U+2588).
+    .EXAMPLE
+      New-RedGreenGradient
+      A full red-to-green bar.
+    .EXAMPLE
+      New-RedGreenGradient -Percent 0.5
+      A bar that stops around the yellow midpoint.
+    .EXAMPLE
+      New-RedGreenGradient -Step 2 -Character '='
+      A long, smooth bar drawn with '='.
+    #>
     [cmdletbinding()]
     [OutputType([System.String])]
 

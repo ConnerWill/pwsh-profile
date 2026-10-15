@@ -2,6 +2,35 @@
 
 Function Get-WindowsVersion {
 
+    <#
+    .SYNOPSIS
+      Get detailed Windows version information for one or more computers.
+    .DESCRIPTION
+      Returns a rich object (ProductName, ReleaseVersion, EditionID, Build,
+      branch, install date, etc.) by combining 'systeminfo' output with the
+      registry, which corrects the Windows 11 "still says Windows 10" registry
+      quirk. Can target remote machines via Invoke-Command with credential,
+      SSL, and authentication options. Windows-only.
+    .PARAMETER Computername
+      One or more computers to query (default: local machine). Pipeline-aware.
+    .PARAMETER Credential
+      Credential to use for remote queries.
+    .PARAMETER UseSSL
+      Use SSL for the remote WSMan connection.
+    .PARAMETER ThrottleLimit
+      Max concurrent remote connections.
+    .PARAMETER Authentication
+      WSMan authentication mechanism (Default, Kerberos, Negotiate, ...).
+    .EXAMPLE
+      Get-WindowsVersion
+      Get version details for the local machine.
+    .EXAMPLE
+      wver -Computername server01 -Credential (Get-Credential)
+      Query a remote host with explicit credentials (via the 'wver' alias).
+    .EXAMPLE
+      'web01','web02' | Get-WindowsVersion | Format-Table Computername, ProductName, Build
+      Query several hosts from the pipeline.
+    #>
     [cmdletbinding()]
     [OutputType("WindowsVersion")]
     [alias('wver')]

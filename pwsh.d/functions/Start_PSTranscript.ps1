@@ -1,6 +1,22 @@
 ## Start_PSTranscript  --  from 24_functions_system.ps1 (one-file-per-function layout)
 
 Function Start_PSTranscript(){
+  <#
+  .SYNOPSIS
+    Start a timestamped PowerShell session transcript (with log rotation).
+  .DESCRIPTION
+    Begins recording the session to a timestamped .log in $PS_TRANSCRIPT_DIR,
+    creating the directory if needed and pruning old transcripts beyond
+    $PS_TRANSCRIPT_MAX. Stops any already-running transcript first so reloads
+    don't stack. Honors these overridable variables:
+      $PS_TRANSCRIPT_ENABLED  (on/off)   $PS_TRANSCRIPT_DIR   (output folder)
+      $PS_TRANSCRIPT_MAX      (keep N; 0 = no pruning)
+    This runs automatically when the profile loads; call it manually to restart
+    transcription after stopping it.
+  .EXAMPLE
+    Start_PSTranscript
+    Start (or restart) recording the current session.
+  #>
   if (-not $PS_TRANSCRIPT_ENABLED){ return }
 
   # Ensure the directory exists (no recursion: just create it, then continue).
