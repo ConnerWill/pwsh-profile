@@ -232,14 +232,21 @@ Documents/PowerShell/
 
 ## The prompt
 
-Defined in `pwsh.d/40_prompt.ps1`. Format:
+Defined in `pwsh.d/40_prompt.ps1`. Format (segments in brackets are optional):
 
 ```
-[ADMIN](date)[user host][path]:(repo)-[branch⊕N⊝N⊛N]:
+[ADMIN](date)[ user@host][path]:(repo)-[branch⊕N⊝N⊛N]:
 ```
 
-- `[user host][path]` — user/host and current directory.
+- `` — a PowerShell glyph (toggle with `$PROMPT_SHOW_GLYPH`).
+- `[user@host]` — username, plus `@hostname` when the hostname segment is shown
+  (hidden by default; see the toggles table). `[ADMIN]` and `(date)` are also
+  off unless enabled.
+- `[path]` — current directory, with `$HOME` collapsed to `~`.
 - `:(repo)-[branch...]` — git segment (only inside a repo).
+
+See [All configuration toggles](#all-configuration-toggles) to customize what
+the prompt shows.
 
 ### Git status colors
 
