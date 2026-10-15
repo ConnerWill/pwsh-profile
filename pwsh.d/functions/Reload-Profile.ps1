@@ -21,18 +21,18 @@ Function Reload-Profile(){
   $pwshPath = (Get-Process -Id $PID).Path
   if (-not $pwshPath) { $pwshPath = 'pwsh' }
 
-  # Clear the current line, move up one, clear it, return to column 0 -- so the
-  # centered "Reloading ..." overwrites the command line (same trick as the zsh
-  # 'ez'). Then print the message bold-green and centered.
-  [Console]::Write("`e[2K`e[1A`e[2K`r")
+  # Clear the screen and show a centered "Reloading ..." for a clean handoff.
+  # (The old cursor-up overwrite trick doesn't help here: unlike zsh's in-place
+  # `exec zsh`, we spawn a fresh pwsh whose own banner repaints the screen, so
+  # we just clear first and let the new shell start clean.)
+  Clear-Host
   if (Get-Command Write-Centered -ErrorAction Ignore) {
-    [Console]::Write("`e[1m")
-    Write-Centered 'Reloading ...' -Color 46 -NoNewline
-    [Console]::Write("`e[0m`e[1A`r")
+    Write-Centered 'Reloading ...' -Color 46
   }
   else {
-    Write-Host "Reloading shell..." -ForegroundColor Green
+    Write-Host 'Reloading ...' -ForegroundColor Green
   }
+  Start-Sleep -Milliseconds 300
 
   # Start a fresh interactive session in the same window, then exit this one
   # so it behaves like a shell replacement.
