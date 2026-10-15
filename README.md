@@ -156,8 +156,8 @@ $PS_TRANSCRIPT_MAX     = 50       # keep newest N logs (0 = never prune)
 | `$ShowStartupArt` | `$true` | Show a random ASCII banner at startup |
 | `$ShowModuleLoad` | `$true` | Show the `Loading Modules: ...` line |
 | `$PROMPT_USERNAME` | auto | Force the username shown in the prompt |
-| `$PROMPT_HOSTNAME` | auto | Force the hostname shown in the prompt |
-| `$PROMPT_SHOW_HOSTNAME` | `$false` | Include the hostname segment in the prompt |
+| `$PROMPT_HOSTNAME` | auto | Force the hostname shown in the prompt (setting it also shows the hostname segment) |
+| `$PROMPT_SHOW_HOSTNAME` | auto | Include the hostname segment (auto-on if `$PROMPT_HOSTNAME` is set) |
 | `$PROMPT_SHOW_DATE` | `$false` | Include a timestamp segment in the prompt |
 | `$PROMPT_SHOW_GLYPH` | `$true` | Show the `` pwsh glyph before the username |
 | `$PS_TRANSCRIPT_ENABLED` | `$true` | Record a session transcript on startup |

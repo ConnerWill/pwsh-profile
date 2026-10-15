@@ -144,12 +144,17 @@ Function prompt {
   }
   $PromptDate        = "($(Get-Date -UFormat '%Y-%m-%d %H:%M:%S'))"
   $PromptRandomColor = Get-Random -Min 1 -Max 255
-  # Prompt segment toggles. Hostname and date are off by default; override from
-  # powershell-config.ps1 with $PROMPT_SHOW_HOSTNAME / $PROMPT_SHOW_DATE.
+  # Prompt segment toggles.
+  #   Hostname: shown if $PROMPT_SHOW_HOSTNAME is explicitly set; otherwise
+  #   auto-shown when $PROMPT_HOSTNAME is set (so setting the name is enough);
+  #   else hidden by default.
+  #   Date: off unless $PROMPT_SHOW_DATE is set.
   $UsePromptUserName = $True
   $UsePromptPWD      = $True
-  $UsePromptHostName = if ($null -ne $PROMPT_SHOW_HOSTNAME) { [bool]$PROMPT_SHOW_HOSTNAME } else { $False }
-  $UsePromptDate     = if ($null -ne $PROMPT_SHOW_DATE)     { [bool]$PROMPT_SHOW_DATE }     else { $False }
+  $UsePromptHostName = if ($null -ne $PROMPT_SHOW_HOSTNAME) { [bool]$PROMPT_SHOW_HOSTNAME }
+                       elseif ($PROMPT_HOSTNAME)            { $True }
+                       else                                 { $False }
+  $UsePromptDate     = if ($null -ne $PROMPT_SHOW_DATE)     { [bool]$PROMPT_SHOW_DATE } else { $False }
   $PromptAtSymbol             = " ";  $PromptSymbol             = ": "
   $PromptUserHostStartBracket = "[";   $PromptUserHostEndBracket = "]"
   $PromptPathStartBracket     = "[";   $PromptPathEndBracket     = "]"
