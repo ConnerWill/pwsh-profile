@@ -196,7 +196,6 @@ Documents/PowerShell/
 │   ├── 01_variables.ps1         # environment variables (XDG paths, EDITOR, HISTFILE, ...)
 │   ├── 02_preferences.ps1       # shell preferences (UTF-8, ConciseView, telemetry opt-out)
 │   ├── 06_modules.ps1           # ensure optional modules (idempotent)
-│   ├── 10_ascii_art.ps1         # source ascii-art.ps1; random startup banner
 │   ├── 20_functions.ps1         # loader: dot-sources every pwsh.d/functions/*.ps1
 │   ├── 26_completion.ps1        # tab-completion integrations (Chocolatey)
 │   ├── 30_psreadline.ps1        # PSReadLine OPTIONS: vi edit mode, prediction, history path
@@ -228,8 +227,9 @@ Documents/PowerShell/
    - Color palette (`$Colors` hashtable, e.g. `$Colors.Red`) — single source of truth for colors
    - Message helpers (`error`, `warn`, `info`, `debug`, `success`, `is_admin`)
    - Module loading (`Get-ChildItemColor`, `PSReadLine`, local-modules)
+   - Random ASCII banner (sourced from `ascii-art.ps1` into the `$Art` hashtable)
    - **pwsh.d loader** — dot-sources every `pwsh.d/*.ps1` sorted by name
-2. `pwsh.d/*.ps1` fragments (02 → 06 → 20..24 → 30 → 40 → 50)
+2. `pwsh.d/*.ps1` fragments (01 → 02 → 06 → 20 → 26 → 30 → 40 → 50)
 3. `Microsoft.PowerShell_profile.ps1` (CurrentUserCurrentHost; empty)
 
 ---
@@ -292,7 +292,7 @@ Aliases are shown in parentheses.
 | `touch <name>`     | Create an empty file (like `touch` in Linux)            |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
-| `grep` (`rg`)      | Linux-style text search (`-r` recurse, `-i`, `-v`, `-l`, `-c`, `-n`, `-w`, `-F`, `--include`); searches files, directories, or piped input |
+| `grep` (`rg`)      | Linux-style text search over files, directories, or piped input. Short flags `-r -i -v -l -c -n -w -F` and `--include <glob>`, each with a long-form alias (`-Recurse`, `-IgnoreCase`, `-Invert`, `-FilesWithMatches`, `-Count`, `-LineNumber`, `-Word`, `-Fixed`, `-Include`) |
 
 ### Command / introspection
 
@@ -318,7 +318,7 @@ Aliases are shown in parentheses.
 | `New-Gradient` (`gradient`, `New-RedGreenGradient`) | Render a gradient bar between two colors (defaults red→green; `-StartColor`/`-EndColor` as `#RRGGBB`, `-Width` defaults to console width, plus `-Percent`/`-Character`) |
 | `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
 | `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
-| `Blink-Message`         | Print blinking colored text                        |
+| `Blink-Message`         | Print blinking colored text (`-Count`, `-Delay`, `-Colors`/`-rgb`; cycles a default color set) |
 
 ### Package / module search
 
@@ -370,7 +370,7 @@ Aliases are shown in parentheses.
 
 | Function          | Description                                             |
 | ----------------- | ------------------------------------------------------- |
-| `Motd-AsciiArt`   | Print the startup ASCII banner (when `$ShowStartupArt`) |
+| `Motd-AsciiArt`   | Print a random ASCII banner from the `$Art` hashtable (same source as the startup banner) |
 | `Invoke-BeepMusic` (`beepmusic`) | Play random beeps through the console speaker (Windows; `-Infinite` to loop) |
 | `Write-Centered` (`center`) | Print text centered in the terminal width (`-Color`, `-Fill`) |
 | `Get-PwSHKeybindings` | List all PSReadLine key handlers (defined in `50_keybindings.ps1`) |
