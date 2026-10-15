@@ -134,6 +134,9 @@ $EDITOR = 'code'
 # Turn the startup ASCII banner on or off.
 $ShowStartupArt = $true
 
+# Show / hide the "Loading Modules: ..." line at startup.
+$ShowModuleLoad = $true
+
 # Force the username / hostname shown in the prompt (otherwise auto-detected).
 $PROMPT_USERNAME = 'me'
 $PROMPT_HOSTNAME = 'mybox'

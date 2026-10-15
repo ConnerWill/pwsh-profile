@@ -108,6 +108,10 @@ function success($msg){ Write-Output "${bg_color_green}${color_white}[SUCCESS]${
 ###{{{ MODULES
 
 Function Invoke-LoadPowerShellModules(){
+  ## Set $ShowModuleLoad = $false in powershell-config.ps1 to hide the
+  ## "Loading Modules: ..." output at startup (modules still load silently).
+  $showLoad = if ($null -ne $ShowModuleLoad) { [bool]$ShowModuleLoad } else { $true }
+
   ## Define modules to load
   ## NOTE: posh-git and Plaster were removed from startup load (nothing in
   ## this profile uses them; the git prompt is hand-rolled in 40_prompt.ps1).
@@ -122,21 +126,21 @@ Function Invoke-LoadPowerShellModules(){
     )
 
     ## Load Modules
-    [console]::Write("`e[0;4;38;5;93mLoading Modules`e[0m: ")
+    if ($showLoad) { [console]::Write("`e[0;4;38;5;93mLoading Modules`e[0m: ") }
     ForEach ($LoadModule in $ModulesArray){
       Try { Import-Module -Name $LoadModule -ErrorAction Stop 2>$null }
-      Catch { [console]::WriteLine("`n`e[0;38;5;196mUnable to load module: `e[0;1;38;5;190m$LoadModule`e[0m"); continue }
+      Catch { if ($showLoad) { [console]::WriteLine("`n`e[0;38;5;196mUnable to load module: `e[0;1;38;5;190m$LoadModule`e[0m") }; continue }
       $LoadModule_BaseName = $null
       if (Test-Path -Path $LoadModule) { $LoadModule_BaseName = (Get-Item -Path $LoadModule).BaseName }
       $LoadModulesRandomColor = Get-Random -Min 1 -Max 230
       If ($null -ne $LoadModule_BaseName){
         $LoadModule=$LoadModule_BaseName
       }
-      [console]::Write(" `e[0;1;38;5;${LoadModulesRandomColor}m$LoadModule`e[0m")
+      if ($showLoad) { [console]::Write(" `e[0;1;38;5;${LoadModulesRandomColor}m$LoadModule`e[0m") }
     }
     ## Terminate the "Loading Modules:" line so the host's
     ## "Loading personal and system profiles took ..." message lands on its own line.
-    [console]::WriteLine()
+    if ($showLoad) { [console]::WriteLine() }
   }
 }; Invoke-LoadPowerShellModules
 

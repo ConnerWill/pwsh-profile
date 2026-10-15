@@ -37,4 +37,9 @@ $PS_TRANSCRIPT_MAX     ??= 50
 ## Show ASCII art banner at startup (used by 10_ascii_art.ps1). Overridable.
 $ShowStartupArt ??= $true
 
+## Show the "Loading Modules: ..." line at startup. This is actually read in
+## profile.ps1 (before fragments load), so set it in powershell-config.ps1 to
+## override. Shown here for discoverability. Default: $true.
+# $ShowModuleLoad = $true
+
 ###}}} END VARIABLES
