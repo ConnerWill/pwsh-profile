@@ -120,9 +120,9 @@ Write-Host ''
 $ProfileDir = Split-Path -Path $PROFILE.CurrentUserAllHosts
 
 function Test-IsThisRepo {
-  param([string]$Path)
-  (Test-Path (Join-Path $Path 'profile.ps1')) -and
-  (Test-Path (Join-Path $Path 'pwsh.d'))
+  param([string]$Directory)
+  (Test-Path (Join-Path $Directory 'profile.ps1')) -and
+  (Test-Path (Join-Path $Directory 'pwsh.d'))
 }
 
 # --------------------------------------------------------------------------
@@ -132,7 +132,7 @@ if (-not $SkipClone) {
   if (-not (Get-Command git -ErrorAction Ignore)) {
     Write-Warning "git not found on PATH; skipping clone/update. Install git, or re-run with -SkipClone after cloning manually."
   }
-  elseif (Test-IsThisRepo -Path $ProfileDir) {
+  elseif (Test-IsThisRepo -Directory $ProfileDir) {
     # Already installed here -> update if it's a git repo.
     if (Test-Path (Join-Path $ProfileDir '.git')) {
       Write-Host "Updating existing profile at: $ProfileDir" -ForegroundColor Cyan
