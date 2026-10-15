@@ -135,8 +135,8 @@ $EDITOR = 'code'
 $ShowStartupArt = $true
 
 # Force the username / hostname shown in the prompt (otherwise auto-detected).
-$PROMPT_USERNAME = 'conner'
-$PROMPT_HOSTNAME = 'archbox'
+$PROMPT_USERNAME = 'me'
+$PROMPT_HOSTNAME = 'mybox'
 ```
 
 ### Updating
