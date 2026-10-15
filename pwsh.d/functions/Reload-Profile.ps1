@@ -32,6 +32,10 @@ Function Reload-Profile(){
     Write-Host 'Reloading ...' -ForegroundColor Green
   }
 
+  # Move the cursor back up onto the "Reloading ..." line so the fresh shell's
+  # first output overwrites it (leaving no leftover "Reloading ..." behind).
+  [Console]::Write("`e[1A`r")
+
   # Start a fresh interactive session in the same window, then exit this one
   # so it behaves like a shell replacement.
   & $pwshPath -NoLogo
