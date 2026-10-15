@@ -49,8 +49,7 @@ function Blink-Message {
     [Parameter(
       HelpMessage= "Enter the message/data to display in blinking colors",
       Position = 0,
-      ValueFromPipeline = $True,
-      ValueFromRemainingArguments = $True)]
+      ValueFromPipeline = $True)]
       [ValidateNotNullOrEmpty()]
       [Alias("input","text")]
       [String]$Message,
