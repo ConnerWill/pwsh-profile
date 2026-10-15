@@ -3,23 +3,27 @@
 Function Reload-Profile(){
   <#
   .SYNOPSIS
-    Reload the PowerShell profile in the current session.
+    Reload the shell by starting a fresh PowerShell session.
   .DESCRIPTION
-    Re-sources the CurrentUserAllHosts profile (profile.ps1), which in turn
-    re-runs the pwsh.d loader. Handy for testing profile changes without
-    opening a new shell.
+    Dot-sourcing the profile from inside a function cannot push the profile's
+    variables (e.g. $EDITOR, $PROMPT_USERNAME, colors) into the global scope, so
+    an in-place reload silently drops them. Instead we start a brand-new
+    interactive pwsh (like 'exec zsh'/'ez' in zsh) and exit the current one when
+    it returns, guaranteeing every change in profile.ps1 / powershell-config.ps1
+    takes effect.
   .EXAMPLE
     Reload-Profile
   #>
   [CmdletBinding()]
   [Alias('reload','ez')]
   Param()
-  $profilePath = $PROFILE.CurrentUserAllHosts
-  if (Test-Path -Path $profilePath) {
-    Write-Host "Reloading profile: $profilePath" -ForegroundColor Cyan
-    . $profilePath
-  }
-  else {
-    Write-Warning "Profile not found: $profilePath"
-  }
+
+  $pwshPath = (Get-Process -Id $PID).Path
+  if (-not $pwshPath) { $pwshPath = 'pwsh' }
+
+  Write-Host "Reloading shell..." -ForegroundColor Cyan
+  # Start a fresh interactive session in the same window, then exit this one
+  # so it behaves like a shell replacement.
+  & $pwshPath -NoLogo
+  exit
 }
