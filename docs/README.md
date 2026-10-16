@@ -6,6 +6,8 @@
 
 > *A modular PowerShell 7 profile and configuration.*
 
+---
+
 [![Github CI Workflow][github-ci-badge]][github-ci-url]
 [![GitHub last commit][github-last-commit-badge]][github-commits]
 [![GitHub issues][github-issues-badge]][github-issues]
