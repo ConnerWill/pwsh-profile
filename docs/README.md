@@ -6,9 +6,18 @@
 
 > *A modular PowerShell 7 profile and configuration.*
 
+[![Github CI Workflow][github-ci-badge]][github-ci-url]
+[![GitHub last commit][github-last-commit-badge]][github-commits]
+[![GitHub issues][github-issues-badge]][github-issues]
+[![GitHub repo size][github-repo-size-badge]][github-repo]
+[![GitHub top language][github-top-language-badge]][github-repo]
+[![GitHub language count][github-language-count-badge]][github-repo]
+[![License][license-badge]][license]
+[![GitHub repo stars][github-repo-stars-badge]][github-repo]
+
 </div>
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Table of Contents
 
@@ -45,7 +54,7 @@
   - [Author](#author)
 <!--toc:end-->
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Overview
 
@@ -61,7 +70,7 @@ This is a **PowerShell 7** (`pwsh`) profile organized as a small bootstrap
 
 The numeric filename prefixes control load order.
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Installation
 
@@ -90,6 +99,8 @@ Invoke-RestMethod https://raw.githubusercontent.com/ConnerWill/pwsh-profile/main
 > parameters through the pipe — use the manual method below if you need
 > `-Force`/`-SkipClone`).
 
+---
+
 ### Manual
 
 ```powershell
@@ -116,6 +127,8 @@ Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
 > by hand, use `--recurse-submodules` (or run
 > `git submodule update --init --recursive` afterward).
 
+---
+
 ### Try it in Docker (throwaway)
 
 <div align="center">
@@ -136,10 +149,14 @@ docker run -it --rm mcr.microsoft.com/powershell:latest bash -c "apt-get update 
 > (`~/.config/powershell` on Linux) and installs modules. Nothing on your host
 > is touched — the container is removed on exit (`--rm`).
 
+---
+
 ### Start a new PowerShell 7 session
 
 Open a new `pwsh` window (or run `reload` / `ez` in an existing one). You should see
 the module-load line, a random ASCII banner, and the git-aware prompt.
+
+---
 
 ### Installation Troubleshooting
 
@@ -150,6 +167,8 @@ If the profile is blocked from running:
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 ```
+
+---
 
 ### Personal / machine-local overrides
 
@@ -201,6 +220,8 @@ $PS_TRANSCRIPT_MAX     = 50       # keep newest N logs (0 = never prune)
 > in `powershell-config.ps1` (which loads first). The rest use `??=`, so a value
 > set there also wins over the defaults.
 
+---
+
 ### Updating
 
 ```powershell
@@ -210,7 +231,7 @@ git submodule update --init --recursive   # refresh bundled submodules
 reload   # or 'ez', or open a new shell
 ```
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Layout
 
@@ -249,7 +270,7 @@ Documents/PowerShell/
 > *bindings* live in `50_keybindings.ps1`. `30` loads before `50` so the edit
 > mode is set before handlers register.
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Load order
 
@@ -264,7 +285,7 @@ Documents/PowerShell/
 2. `pwsh.d/*.ps1` fragments (01 → 02 → 06 → 20 → 26 → 30 → 40 → 50)
 3. `Microsoft.PowerShell_profile.ps1` (CurrentUserCurrentHost; empty)
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## The prompt
 
@@ -293,6 +314,8 @@ the prompt shows.
 | Untracked present  | red          | one or more `??` files                  |
 | Merge conflict     | orange (208) | highest priority                        |
 
+---
+
 ### Git count glyphs
 
 | Glyph | Meaning            | Color  |
@@ -304,7 +327,7 @@ the prompt shows.
 All prompt colors are composed from the `$Colors` hashtable (e.g. `$Colors.Red`,
 `$Colors.CyanBright`) defined in `profile.ps1`.
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Functions
 
@@ -327,6 +350,8 @@ Aliases are shown in parentheses.
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
 | `grep` (`rg`)      | Linux-style text search over files, directories, or piped input. Short flags `-r -i -v -l -c -n -w -F` and `--include <glob>`, each with a long-form alias (`-Recurse`, `-IgnoreCase`, `-Invert`, `-FilesWithMatches`, `-Count`, `-LineNumber`, `-Word`, `-Fixed`, `-Include`) |
 
+---
+
 ### Command / introspection
 
 | Function              | Description                                          |
@@ -337,6 +362,8 @@ Aliases are shown in parentheses.
 | `Get-CmdletAlias` (`aliases`) | List the aliases of a cmdlet                 |
 | `Test-Command` (`tcm`) | Check whether a command exists                      |
 | `Encode-Command`      | Base64-encode a command for `pwsh -EncodedCommand`   |
+
+---
 
 ### Color / ANSI
 
@@ -353,6 +380,8 @@ Aliases are shown in parentheses.
 | `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
 | `Blink-Message`         | Print blinking colored text (`-Count`, `-Delay`, `-Colors`/`-rgb`; cycles a default color set) |
 
+---
+
 ### Package / module search
 
 | Function          | Description                                             |
@@ -364,6 +393,8 @@ Aliases are shown in parentheses.
 > `yays` / `Instort-Module` helpers. The old names (except `yays`) remain as
 > aliases, so `Search-Modules` etc. still work.
 
+---
+
 ### System / admin
 
 | Function                  | Description                                     |
@@ -373,6 +404,8 @@ Aliases are shown in parentheses.
 | `ssh-local`               | SSH helper: `ssh-local -User <u> -Hostname <h> -Port <p>` |
 | `Get-WiFiPasswords`       | List saved Wi-Fi networks + passwords as a table |
 | `Update-Windows`          | Download and install Windows updates            |
+
+---
 
 ### Active Directory
 
@@ -391,6 +424,8 @@ Aliases are shown in parentheses.
 | `Get-AdGroupMembers`       | List members of an AD group (`-Recursive` for nested) |
 | `Get-LockedAdUsers`        | Find accounts that are currently locked out     |
 
+---
+
 ### Host / system info
 
 | Function                   | Description                                    |
@@ -398,6 +433,8 @@ Aliases are shown in parentheses.
 | `Get-PSWho` (`pswho`)      | Summary of user, elevation, OS, and PowerShell |
 | `Get-WindowsVersion` (`wver`) | Detailed Windows version/build info         |
 | `Get-WindowsVersionString` | One-line Windows version string                |
+
+---
 
 ### Misc
 
@@ -409,19 +446,7 @@ Aliases are shown in parentheses.
 | `Get-PwSHKeybindings` | List all PSReadLine key handlers (defined in `50_keybindings.ps1`) |
 | `Convert-ImageToASCIIArt` | Convert an image to ASCII art (bundled as a git submodule under `local-modules/`; see [its repo](https://github.com/ConnerWill/Convert-ImageToASCIIArt)) |
 
----
-
-## Line endings (CRLF)
-
-PowerShell on Windows expects CRLF. A `.gitattributes` enforces this for
-`*.ps1` so cloning on different machines doesn't introduce `^M`/LF-mixing
-problems. If you ever see stray `^M`, convert a file to CRLF:
-
-```powershell
-(Get-Content -Raw file.ps1) -replace "`r?`n","`r`n" | Set-Content -NoNewline file.ps1
-```
-
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Editing tips
 
@@ -435,7 +460,17 @@ problems. If you ever see stray `^M`, convert a file to CRLF:
     (Resolve-Path .\pwsh.d\40_prompt.ps1), [ref]$null, [ref]$e); $e
   ```
 
----
+### Line endings (CRLF)
+
+PowerShell on Windows expects CRLF. A `.gitattributes` enforces this for
+`*.ps1` so cloning on different machines doesn't introduce `^M`/LF-mixing
+problems. If you ever see stray `^M`, convert a file to CRLF:
+
+```powershell
+(Get-Content -Raw file.ps1) -replace "`r?`n","`r`n" | Set-Content -NoNewline file.ps1
+```
+
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
 
 ## Author
 
@@ -448,4 +483,19 @@ Repository
 GitHub
 : [github/ConnerWill](https://github.com/ConnerWill)
 
----
+<img width="100%" src="https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png">
+
+[github-repo]: https://github.com/ConnerWill/pwsh-profile
+[github-ci-badge]: https://github.com/ConnerWill/pwsh-profile/actions/workflows/ci.yml/badge.svg
+[github-ci-url]: https://github.com/ConnerWill/pwsh-profile/actions/workflows/ci.yml
+[github-top-language-badge]: https://img.shields.io/github/languages/top/ConnerWill/pwsh-profile
+[github-language-count-badge]: https://img.shields.io/github/languages/count/ConnerWill/pwsh-profile
+[github-last-commit-badge]: https://img.shields.io/github/last-commit/ConnerWill/pwsh-profile
+[github-commits]: https://github.com/ConnerWill/pwsh-profile/commits/main
+[github-issues-badge]: https://img.shields.io/github/issues-raw/ConnerWill/pwsh-profile
+[github-issues]: https://github.com/ConnerWill/pwsh-profile/issues
+[github-repo-size-badge]: https://img.shields.io/github/repo-size/ConnerWill/pwsh-profile
+[license-badge]: https://img.shields.io/github/license/ConnerWill/pwsh-profile
+[license]: https://github.com/ConnerWill/pwsh-profile/blob/main/docs/LICENSE
+[github-repo-stars-badge]: https://img.shields.io/github/stars/ConnerWill/pwsh-profile?style=social
+[rainbow-line]: https://raw.githubusercontent.com/ConnerWill/Project-Template/main/assets/lines/rainbow.png
