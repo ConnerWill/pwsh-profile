@@ -317,6 +317,7 @@ Aliases are shown in parentheses.
 | Function           | Description                                             |
 | ------------------ | ------------------------------------------------------- |
 | `l` / `ll` / `sl`  | Directory listings (colored via `Get-ChildItemColor`, with plain fallback) |
+| `lls [path]`       | Long listing sorted by size (largest last) with a total; native, no external tools |
 | `cdp`              | `cd` to the profile directory                           |
 | `..` / `...` / `....` / `.....` | Go up 1 / 2 / 3 / 4 parent directories    |
 | `cd -` / `cd \$OLDPWD` | Jump back to the previous directory (`\$OLDPWD` is tracked) |
