@@ -138,7 +138,8 @@ Function Invoke-LoadPowerShellModules(){
       "PSReadLine",
       "${PDOTDIR}\local-modules\PSReadLineViVisualMode\src\PSReadLineViVisualMode",
       "${PDOTDIR}\local-modules\pwsh-syntax-highlighting\syntax-highlighting.psm1",
-      "${PDOTDIR}\local-modules\powershell-pathx\pathx.psm1"
+      "${PDOTDIR}\local-modules\powershell-pathx\pathx.psm1",
+      "${PDOTDIR}\local-modules\Convert-ImageToASCIIArt\Convert-ImageToASCIIArt.psm1"
     )
 
     ## Load Modules

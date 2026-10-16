@@ -103,12 +103,18 @@ Or clone yourself and run the in-repo installer (it detects the existing clone
 and just updates + installs modules):
 
 ```powershell
-git clone https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
+git clone --recurse-submodules https://github.com/ConnerWill/pwsh-profile.git (Split-Path $PROFILE.CurrentUserAllHosts)
 pwsh -NoProfile -File "$(Split-Path $PROFILE.CurrentUserAllHosts)\install-pwshprofile.ps1"
 ```
 
 Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
 `PSReadLine`, `posh-git`, `Plaster`, `PSFunctionTools`.
+
+> **Submodules:** some vendored modules under `local-modules/` are git
+> submodules (e.g. [`Convert-ImageToASCIIArt`](https://github.com/ConnerWill/Convert-ImageToASCIIArt)).
+> The bootstrap/one-liner installer handles them automatically; if you clone
+> by hand, use `--recurse-submodules` (or run
+> `git submodule update --init --recursive` afterward).
 
 ### Try it in Docker (throwaway)
 
@@ -200,6 +206,7 @@ $PS_TRANSCRIPT_MAX     = 50       # keep newest N logs (0 = never prune)
 ```powershell
 cd "$HOME\Documents\PowerShell"
 git pull
+git submodule update --init --recursive   # refresh bundled submodules
 reload   # or 'ez', or open a new shell
 ```
 
@@ -227,7 +234,7 @@ Documents/PowerShell/
 │   ├── 40_prompt.ps1            # prompt() + git status segment
 │   ├── 50_keybindings.ps1       # PSReadLine KEY BINDINGS (Set-PSReadLineKeyHandler)
 │   └── functions/               # one file per function (see Functions section below)
-├── local-modules/               # vendored modules loaded by path at startup
+├── local-modules/               # vendored modules loaded by path at startup (some are git submodules)
 └── Modules/                     # installed modules (PowerShellGet)
 ```
 
@@ -399,6 +406,7 @@ Aliases are shown in parentheses.
 | `Invoke-BeepMusic` (`beepmusic`) | Play random beeps through the console speaker (Windows; `-Infinite` to loop) |
 | `Write-Centered` (`center`) | Print text centered in the terminal width (`-Color`, `-Fill`) |
 | `Get-PwSHKeybindings` | List all PSReadLine key handlers (defined in `50_keybindings.ps1`) |
+| `Convert-ImageToASCIIArt` | Convert an image to ASCII art (bundled as a git submodule under `local-modules/`; see [its repo](https://github.com/ConnerWill/Convert-ImageToASCIIArt)) |
 
 ---
 

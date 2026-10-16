@@ -1,0 +1,3 @@
+[submodule "local-modules/Convert-ImageToASCIIArt"]
+	path = local-modules/Convert-ImageToASCIIArt
+	url = https://github.com/ConnerWill/Convert-ImageToASCIIArt.git

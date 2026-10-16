@@ -137,6 +137,8 @@ if (-not $SkipClone) {
     if (Test-Path (Join-Path $ProfileDir '.git')) {
       Write-Host "Updating existing profile at: $ProfileDir" -ForegroundColor Cyan
       git -C $ProfileDir pull --ff-only
+      # Pull in any new/updated git submodules (e.g. local-modules/*).
+      git -C $ProfileDir submodule update --init --recursive
     }
     else {
       Write-Host "Profile already present (not a git clone) at: $ProfileDir -- leaving as is." -ForegroundColor DarkGray
@@ -152,7 +154,10 @@ if (-not $SkipClone) {
     $parent = Split-Path -Path $ProfileDir -Parent
     if (-not (Test-Path $parent)) { New-Item -Path $parent -ItemType Directory -Force | Out-Null }
     Write-Host "Cloning $RepoUrl -> $ProfileDir" -ForegroundColor Cyan
-    git clone $RepoUrl $ProfileDir
+    git clone --recurse-submodules $RepoUrl $ProfileDir
+    # Fallback for older git versions where --recurse-submodules on clone is
+    # unavailable or partial: ensure submodules are initialized.
+    git -C $ProfileDir submodule update --init --recursive
   }
 }
 
