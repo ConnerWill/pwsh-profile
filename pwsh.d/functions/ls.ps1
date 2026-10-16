@@ -59,9 +59,10 @@ Function lls {
   .DESCRIPTION
     Ported from the zsh `lls` alias. Prints a playful "this could take a while"
     banner and a timestamp, then lists the directory in long format sorted by
-    size — directories first, then files smallest-to-largest, so the biggest
-    files sit nearest the prompt. Native PowerShell (no external tools). Prints a
-    byte/MB total at the end.
+    true size — directory sizes are computed recursively (sum of all files
+    inside), so folders and files are ranked together with the largest nearest
+    the prompt. Native PowerShell (no external tools). Shows a human-readable
+    size per entry and a grand total at the end.
   .PARAMETER Path
     Directory to list (default: the current directory).
   .EXAMPLE
@@ -91,17 +92,46 @@ Function lls {
   )
   Write-Host (Get-Date -Format 'yyyyMMdd_HHmmss')
 
-  $items = Get-ChildItem -LiteralPath $Path -Force -ErrorAction SilentlyContinue |
-    Sort-Object -Property @{ Expression = { if ($_.PSIsContainer) { 0 } else { $_.Length } } }
+  $items = Get-ChildItem -LiteralPath $Path -Force -ErrorAction SilentlyContinue
 
-  $items |
+  # Compute a true size for every entry: files use their length; directories are
+  # summed recursively. Carry the raw byte size so we can sort and total on it.
+  $rows = foreach ($item in $items) {
+    if ($item.PSIsContainer) {
+      $bytes = (Get-ChildItem -LiteralPath $item.FullName -Recurse -File -Force -ErrorAction SilentlyContinue |
+                Measure-Object -Property Length -Sum).Sum
+      if ($null -eq $bytes) { $bytes = 0 }
+    }
+    else {
+      $bytes = $item.Length
+    }
+    [pscustomobject]@{
+      Mode     = $item.Mode
+      Bytes    = [int64]$bytes
+      Modified = $item.LastWriteTime.ToString('yyyyMMdd-HHmmss')
+      Name     = if ($item.PSIsContainer) { "$($item.Name)/" } else { $item.Name }
+    }
+  }
+
+  # Human-readable size formatter (B/KB/MB/GB/TB).
+  function Format-Size([int64]$n) {
+    $u = 'B','KB','MB','GB','TB'; $i = 0; $v = [double]$n
+    while ($v -ge 1024 -and $i -lt $u.Count - 1) { $v /= 1024; $i++ }
+    if ($i -eq 0) { '{0} {1}' -f [int64]$v, $u[$i] } else { '{0:N1} {1}' -f $v, $u[$i] }
+  }
+
+  # Sort by true size ascending so the largest entries sit nearest the prompt
+  # (matches the zsh alias's --sort=size --reverse).
+  $rows |
+    Sort-Object Bytes |
     Select-Object `
-      @{ N = 'Mode';     E = { $_.Mode } },
-      @{ N = 'Size';     E = { if ($_.PSIsContainer) { '' } else { '{0,12:N0}' -f $_.Length } } },
-      @{ N = 'Modified'; E = { $_.LastWriteTime.ToString('yyyyMMdd-HHmmss') } },
-      @{ N = 'Name';     E = { $_.Name } } |
+      Mode,
+      @{ N = 'Size'; E = { '{0,10}' -f (Format-Size $_.Bytes) } },
+      Modified,
+      Name |
     Format-Table -AutoSize
 
-  $total = ($items | Where-Object { -not $_.PSIsContainer } | Measure-Object -Property Length -Sum).Sum
-  Write-Host ("$($c.Cyan)Total size: {0:N0} bytes ({1:N2} MB)$($c.Reset)" -f [int64]$total, ($total / 1MB))
+  $total = ($rows | Measure-Object -Property Bytes -Sum).Sum
+  if ($null -eq $total) { $total = 0 }
+  Write-Host ("$($c.Cyan)Total size: {0} ({1:N0} bytes)$($c.Reset)" -f (Format-Size $total), [int64]$total)
 }
