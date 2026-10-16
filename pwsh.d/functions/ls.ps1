@@ -77,8 +77,18 @@ Function lls {
     [string]$Path = '.'
   )
 
-  # Playful banner + timestamp, matching the zsh alias.
-  [Console]::Write("`e[0;1;38;5;93m🌚🌚`e[0;1;3;4;38;5;199mThis could take a while...`e[0m`e[0;1;38;5;93m🌚🌚`e[0m`t")
+  # Playful banner + timestamp, matching the zsh alias. Colors come from the
+  # $Colors hashtable (single source of truth); fall back to raw escapes if it
+  # isn't defined (e.g. Windows PowerShell 5).
+  $c = if ($Colors -is [hashtable]) { $Colors } else {
+    @{ Reset = "`e[0m"; Bold = "`e[1m"; Italic = "`e[3m"; Underline = "`e[4m"
+       Purple = "`e[38;5;93m"; Magenta = "`e[38;5;201m"; Cyan = "`e[38;5;87m" }
+  }
+  [Console]::Write(
+    "$($c.Reset)$($c.Bold)$($c.Purple)🌚🌚" +
+    "$($c.Reset)$($c.Bold)$($c.Italic)$($c.Underline)$($c.Magenta)This could take a while..." +
+    "$($c.Reset)$($c.Bold)$($c.Purple)🌚🌚$($c.Reset)`t"
+  )
   Write-Host (Get-Date -Format 'yyyyMMdd_HHmmss')
 
   $items = Get-ChildItem -LiteralPath $Path -Force -ErrorAction SilentlyContinue |
@@ -93,5 +103,5 @@ Function lls {
     Format-Table -AutoSize
 
   $total = ($items | Where-Object { -not $_.PSIsContainer } | Measure-Object -Property Length -Sum).Sum
-  Write-Host ("Total size: {0:N0} bytes ({1:N2} MB)" -f [int64]$total, ($total / 1MB)) -ForegroundColor Cyan
+  Write-Host ("$($c.Cyan)Total size: {0:N0} bytes ({1:N2} MB)$($c.Reset)" -f [int64]$total, ($total / 1MB))
 }
