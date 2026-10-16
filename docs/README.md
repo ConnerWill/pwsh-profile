@@ -84,7 +84,8 @@ required modules.
 
 <div align="center">
 
-![install-pwshprofile screenshot](./assets/install-pwshprofile.png)
+| ![install-pwshprofile-screenshot](./assets/install-pwshprofile.png) | ![install-pwshprofile docker screenshot](./assets/install-pwshprofile-docker.png) |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 
 </div>
 
@@ -135,7 +136,7 @@ Modules installed (CurrentUser scope, idempotent): `Get-ChildItemColor`,
 
 <div align="center">
 
-![install-pwshprofile docker screenshot](./assets/install-pwshprofile-docker.png)
+![Test Powershell Config In Docker](./assets/install-pwshprofile-docker.gif)
 
 </div>
 
