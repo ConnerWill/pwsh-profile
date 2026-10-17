@@ -89,6 +89,16 @@ jobs:
     container:
       image: mcr.microsoft.com/powershell:latest
     steps:
+      - name: Install Git (required for submodule checkout)
+        shell: bash
+        run: |
+          # The powershell image is Debian-based but ships without Git. Without
+          # Git 2.18+, actions/checkout falls back to the REST API download,
+          # which does not support the 'submodules' option.
+          apt-get update
+          apt-get install -y --no-install-recommends git
+          git --version
+
       - uses: actions/checkout@v4
         with:
           submodules: recursive
