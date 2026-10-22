@@ -232,7 +232,7 @@ $($c.bold)$($c.green)  1. Reload / start a fresh session (loads everything):$($c
 $($c.cyan)       ez               $($c.grey)# or 'reload', or open a new pwsh$($c.reset)
 
 $($c.bold)$($c.green)  2. The prompt shows git status inside a repo:$($c.reset)
-$($c.cyan)       cd $PDOTDIR  $($c.grey)# branch + counts: green=clean, red=untracked...$($c.reset)
+$($c.cyan)       cd `$PDOTDIR  $($c.grey)# branch + counts: green=clean, red=untracked...$($c.reset)
 
 $($c.bold)$($c.green)  3. Navigation:$($c.reset)
 $($c.cyan)       ..   ...   ....  $($c.grey)# go up 1 / 2 / 3 directories$($c.reset)
