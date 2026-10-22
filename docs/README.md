@@ -349,10 +349,12 @@ Aliases are shown in parentheses.
 | ------------------ | ------------------------------------------------------- |
 | `l` / `ll` / `sl`  | Directory listings (colored via `Get-ChildItemColor`, with plain fallback) |
 | `lls [path]`       | Long listing sorted by size (largest last) with a total; native, no external tools |
+| `cd <dir>` / `cd <file>` | Change directory; given a file, switch to its parent dir instead (smart cd, e.g. `cd /etc/fstab` → `/etc`). Prints a colored notice, or a colored error for a missing path |
 | `cdp`              | `cd` to the profile directory                           |
 | `..` / `...` / `....` / `.....` | Go up 1 / 2 / 3 / 4 parent directories    |
 | `cd -` / `cd \$OLDPWD` | Jump back to the previous directory (`\$OLDPWD` is tracked) |
 | `realpath` (`rp`) | Resolve a path to its absolute, canonical form (like `realpath`) |
+| `Convert-PathSlash` (`slashf`) | Flip path separators: `\`→`/` with a leading `/` by default; `-ToWindows` reverses, `-DriveStyle` gives MSYS form (`C:\x`→`/c/x`), `-NoLeadingSlash` skips the leading slash |
 | `touch <name>`     | Create an empty file (like `touch` in Linux)            |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
@@ -370,6 +372,7 @@ Aliases are shown in parentheses.
 | `Get-CmdletAlias` (`aliases`) | List the aliases of a cmdlet                 |
 | `Test-Command` (`tcm`) | Check whether a command exists                      |
 | `Encode-Command`      | Base64-encode a command for `pwsh -EncodedCommand`   |
+| `cht <query> ...`     | Look up cheat sheets from [cht.sh](https://cht.sh) (multiple queries, pipeline input; paged via `$PAGER`) |
 
 ---
 
