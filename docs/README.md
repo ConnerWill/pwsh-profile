@@ -212,7 +212,7 @@ $PS_TRANSCRIPT_MAX     = 50       # keep newest N logs (0 = never prune)
 | Variable | Default | Effect |
 | -------- | ------- | ------ |
 | `$EDITOR` | `notepad.exe` | Editor launched by the `e` function |
-| `$PAGER` | `less -FRX` (if `less` on PATH) | Pager used by functions that page output (e.g. `cht`) |
+| `$PAGER` | `less -FRX` (if `less` on PATH) | Pager used by functions that page output |
 | `$ShowStartupArt` | `$true` | Show a random ASCII banner at startup |
 | `$ShowModuleLoad` | `$true` | Show the `Loading Modules: ...` line |
 | `$PROMPT_USERNAME` | auto | Force the username shown in the prompt |
