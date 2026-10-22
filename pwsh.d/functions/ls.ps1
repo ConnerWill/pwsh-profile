@@ -266,7 +266,8 @@ Function ll(){
 
   $lsd = Get-LsdCommand
   if ($lsd) {
-    & $lsd.Source --color always --icon always --oneline --long --almost-all --permission octal --date '+%Y%m%d-%H%M%S' $Path
+    $perm = if ($IsWindows) { @() } else { @('--permission', 'octal') }
+    & $lsd.Source --color always --icon always --oneline --long --almost-all @perm $Path
     return
   }
   try { Get-ChildItemColor -Path $Path }
@@ -296,7 +297,8 @@ Function sl(){
 
   $lsd = Get-LsdCommand
   if ($lsd) {
-    & $lsd.Source --color always --icon always --oneline --long --almost-all --permission octal $Path
+    $perm = if ($IsWindows) { @() } else { @('--permission', 'octal') }
+    & $lsd.Source --color always --icon always --oneline --long --almost-all @perm $Path
     return
   }
   try { Get-ChildItemColor -Path $Path }
