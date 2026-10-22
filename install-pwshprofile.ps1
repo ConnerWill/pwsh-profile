@@ -232,7 +232,7 @@ $($c.bold)$($c.green)  1. Reload / start a fresh session (loads everything):$($c
 $($c.cyan)       ez               $($c.grey)# or 'reload', or open a new pwsh$($c.reset)
 
 $($c.bold)$($c.green)  2. The prompt shows git status inside a repo:$($c.reset)
-$($c.cyan)       cd <a git repo>  $($c.grey)# branch + counts: green=clean, red=untracked...$($c.reset)
+$($c.cyan)       cd $PDOTDIR  $($c.grey)# branch + counts: green=clean, red=untracked...$($c.reset)
 
 $($c.bold)$($c.green)  3. Navigation:$($c.reset)
 $($c.cyan)       ..   ...   ....  $($c.grey)# go up 1 / 2 / 3 directories$($c.reset)
@@ -240,11 +240,14 @@ $($c.cyan)       cd -             $($c.grey)# jump back to the previous director
 $($c.cyan)       cdp              $($c.grey)# cd to the profile directory$($c.reset)
 
 $($c.bold)$($c.green)  4. Try some functions:$($c.reset)
-$($c.cyan)       Get-ANSIColors   $($c.grey)# the 256-color block palette$($c.reset)
-$($c.cyan)       Show-Colors      $($c.grey)# color/ANSI reference (-Style List/Table/Ansi/All)$($c.reset)
-$($c.cyan)       touch f.txt      $($c.grey)# create an empty file$($c.reset)
-$($c.cyan)       which ez         $($c.grey)# resolve a command/alias/function$($c.reset)
-$($c.cyan)       Get-PwSHKeybindings  $($c.grey)# list PSReadLine key handlers$($c.reset)
+$($c.cyan)       Get-ANSIColors         $($c.grey)# the 256-color block palette$($c.reset)
+$($c.cyan)       Show-Colors -Style all $($c.grey)# color/ANSI reference (-Style List/Table/Ansi/All)$($c.reset)
+$($c.cyan)       touch f.txt            $($c.grey)# create an empty file$($c.reset)
+$($c.cyan)       grep                   $($c.grey)# Search text like Linux 'grep' (wraps Select-String)$($c.reset)
+$($c.cyan)       which ez               $($c.grey)# resolve a command/alias/function$($c.reset)
+$($c.cyan)       Motd-AsciiArt          $($c.grey)# Print a random ASCII-art banner from the `$Art hashtable$($c.reset)
+$($c.cyan)       Invoke-BeepMusic       $($c.grey)# Play a sequence of random beeps (toy "music") through the console speaker$($c.reset)
+$($c.cyan)       Get-PwSHKeybindings    $($c.grey)# list PSReadLine key handlers$($c.reset)
 
 $($c.bold)$($c.it)$($c.orange)  Tip: run '$($c.cyan)e$($c.orange)' to open your editor (`$EDITOR).$($c.reset)
 $($c.bold)$($c.it)$($c.orange)  Tip: personal overrides go in '$($c.cyan)powershell-config.ps1$($c.orange)' (gitignored).$($c.reset)
