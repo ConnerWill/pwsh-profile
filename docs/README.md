@@ -347,15 +347,22 @@ Aliases are shown in parentheses.
 
 | Function           | Description                                             |
 | ------------------ | ------------------------------------------------------- |
-| `l` / `ll` / `sl`  | Directory listings (colored via `Get-ChildItemColor`, with plain fallback) |
-| `lls [path]`       | Long listing sorted by size (largest last) with a total; native, no external tools |
+| `ls [flags] [path]` | Linux-like `ls`: uses `lsd` (color + icons) when installed, else `Get-ChildItemColor`, else plain `Get-ChildItem`. Flags as switches — `-a` (hidden), `-l` (long), `-Recurse`, `-t` (time), `-S` (size), `-r` (reverse), `-d`/`-f` (dirs/files only); separate form `-a -l` is reliable, bundled `-al` best-effort |
+| `l`                | One-per-line listing (like `ls -1`): `lsd --oneline` when installed, else colored-by-type names (dirs blue+`/`, executables green, symlinks cyan) |
+| `ll` / `sl`        | Detailed/long colored listing: `lsd --long` when installed, else `Get-ChildItemColor` (plain fallback) |
+| `lst [path]`       | Long listing sorted by modification time (newest first; `-r` oldest first, `-a` include hidden). Uses `lsd` when installed |
+| `lls [path]`       | Long listing sorted by size (largest last) with a total; uses `lsd --total-size` when installed, else native PowerShell (no external tools) |
 | `cd <dir>` / `cd <file>` | Change directory; given a file, switch to its parent dir instead (smart cd, e.g. `cd /etc/fstab` → `/etc`). Prints a colored notice, or a colored error for a missing path |
 | `cdp`              | `cd` to the profile directory                           |
 | `..` / `...` / `....` / `.....` | Go up 1 / 2 / 3 / 4 parent directories    |
 | `cd -` / `cd \$OLDPWD` | Jump back to the previous directory (`\$OLDPWD` is tracked) |
 | `realpath` (`rp`) | Resolve a path to its absolute, canonical form (like `realpath`) |
 | `Convert-PathSlash` (`slashf`) | Flip path separators: `\`→`/` with a leading `/` by default; `-ToWindows` reverses, `-DriveStyle` gives MSYS form (`C:\x`→`/c/x`), `-NoLeadingSlash` skips the leading slash |
-| `touch <name>`     | Create an empty file (like `touch` in Linux)            |
+| `touch <path> ...` | Update a file's timestamps, creating it (empty) if missing (like `touch`). Multiple paths, pipeline input, makes parent dirs; `-NoCreate`, `-Date` |
+| `mkcd <path>`      | Make a directory (and parents) then `cd` into it |
+| `cat <file> ...`   | View files with syntax highlighting via `bat` when installed; falls back to `Get-Content`. Extra args pass through to bat |
+| `sed 's/find/replace/[gi]'` | Stream substitution (subset of Linux `sed`) over pipeline or files; any delimiter, `g`/`i` flags, `-InPlace` to rewrite files |
+| `du [path]`        | Directory usage: per-entry recursive sizes + total, human-readable (`-Ascending`, `-Raw`) |
 | `e [path]`         | Open `$EDITOR`; with no path, opens the editor empty    |
 | `Search-Item` (`search`) | Recursive filename search from the current directory |
 | `grep` (`rg`)      | Linux-style text search over files, directories, or piped input. Short flags `-r -i -v -l -c -n -w -F` and `--include <glob>`, each with a long-form alias (`-Recurse`, `-IgnoreCase`, `-Invert`, `-FilesWithMatches`, `-Count`, `-LineNumber`, `-Word`, `-Fixed`, `-Include`) |
@@ -371,7 +378,7 @@ Aliases are shown in parentheses.
 | `Get-CommandInfo`     | Return the `CommandInfo` for a command               |
 | `Get-CmdletAlias` (`aliases`) | List the aliases of a cmdlet                 |
 | `Test-Command` (`tcm`) | Check whether a command exists                      |
-| `Encode-Command`      | Base64-encode a command for `pwsh -EncodedCommand`   |
+| `Encode-Command` (`encmd`) | Base64-encode a command for `pwsh -EncodedCommand`; copies it to the clipboard and shows a syntax-colored "how to run" line. `-Raw` (token only), `-NoClipboard` |
 | `cht <query> ...`     | Look up cheat sheets from [cht.sh](https://cht.sh) (multiple queries, pipeline input; paged via `$PAGER`) |
 
 ---
@@ -385,7 +392,8 @@ Aliases are shown in parentheses.
 | `Show-ColorList` / `Show-ColorTable` | Shortcuts for `Show-Colors -Style List` / `Table` |
 | `New-ANSIBar`           | Build a colored bar from a range of 256-colors     |
 | `Show-RainbowLoadingBar` (`rainbow`) | Animated rainbow bar across the terminal width |
-| `draw_line`             | Draw a single full-width line in a given color (default green) |
+| `draw_line`             | Full-width line: a solid background-color bar by default (`draw_line [color]`), or a repeated-glyph rule via `-Style 1-10` (`─ ═ ▂ ▄ ▀ #`) / `-Char <glyph>`, colored with `-Color` |
+| `line [word ...]`       | Tile one or more words/characters across the terminal width (default `─`) |
 | `New-Gradient` (`gradient`, `New-RedGreenGradient`) | Render a gradient bar between two colors (defaults red→green; `-StartColor`/`-EndColor` as `#RRGGBB`, `-Width` defaults to console width, plus `-Percent`/`-Character`) |
 | `Convert-HexToAnsi` (`cha`) | Convert an HTML hex color to an ANSI sequence  |
 | `Out-ConditionalColor` (`occ`) | Color pipeline objects by a condition       |
@@ -410,6 +418,8 @@ Aliases are shown in parentheses.
 
 | Function                  | Description                                     |
 | ------------------------- | ----------------------------------------------- |
+| `df [-Raw]`               | Filesystem disk usage (like `df -h`): size/used/free/use% per volume, human-readable |
+| `env [name] [-Raw]`       | List environment variables as `NAME=VALUE` (sorted); a wildcard filters, an exact name prints just the value (like `printenv`) |
 | `Reload-Profile` (`reload`, `ez`) | Re-source the profile in place (no new process; refreshes functions, prompt, and config) |
 | `Start_PSTranscript`      | Start a session transcript (auto-run; prunes old logs) |
 | `ssh-local`               | SSH helper: `ssh-local -User <u> -Hostname <h> -Port <p>` |

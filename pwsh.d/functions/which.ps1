@@ -3,23 +3,37 @@
 Function which(){
   <#
   .SYNOPSIS
-    Show what a command is (like 'which' in linux).
+    Show what a command is (like 'which' in Linux).
 
   .DESCRIPTION
-    Resolves a command of any type:
-      * Alias       -> shows what it resolves to (following the chain).
-      * Function    -> shows its ScriptBlock definition.
+    Resolves a command of any type and reports what it actually is:
+      * Alias       -> shows what it resolves to, then recurses to follow the
+                       chain down to the underlying function/app.
+      * Function    -> prints its ScriptBlock definition.
+      * Filter      -> prints its ScriptBlock definition.
       * Cmdlet      -> shows the owning module.
-      * Application -> shows the path on disk.
+      * Application -> shows the executable's path on disk.
+    Errors clearly if the name resolves to nothing.
+
+  .PARAMETER Command
+    Name of the alias, function, cmdlet, or application to resolve.
 
   .EXAMPLE
-	  which ez          # alias -> Reload-Profile
+    which ez
+    Alias -> follows the chain (e.g. 'ez' -> Reload-Profile) and shows the
+    resolved function definition.
 
   .EXAMPLE
-	  which Clear-Host  # function/cmdlet
+    which Clear-Host
+    A function or cmdlet -> prints its definition or owning module.
 
   .EXAMPLE
-	  which git         # application path
+    which git
+    An application -> prints the full path to git on disk.
+
+  .EXAMPLE
+    which doesnotexist
+    Prints a clear error since the name resolves to nothing.
   #>
   [CmdletBinding()]
   Param (

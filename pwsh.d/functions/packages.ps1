@@ -75,12 +75,15 @@ Function Install-PSModule {
   )
 
   process {
+    $cInfo = if ($Colors) { $Colors.Yellow } else { '' }
+    $cOk   = if ($Colors) { $Colors.Green }  else { '' }
+    $cRst  = if ($Colors) { $Colors.Reset }  else { '' }
     foreach ($m in $Name) {
       try {
-        Write-Host "Installing module: $m" -ForegroundColor Yellow
+        Write-Output "${cInfo}Installing module: $m${cRst}"
         Install-Module -Name $m -Scope CurrentUser -Force -AcceptLicense -ErrorAction Stop
         Import-Module -Name $m -ErrorAction Stop
-        Write-Host "Installed + imported: $m" -ForegroundColor Green
+        Write-Output "${cOk}Installed + imported: $m${cRst}"
         Get-Command -Module $m -ErrorAction SilentlyContinue
       }
       catch {

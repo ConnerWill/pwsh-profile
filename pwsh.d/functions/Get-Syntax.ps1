@@ -3,12 +3,33 @@
 Function Get-Syntax {
   <#
   .SYNOPSIS
-    Get the syntax for a command.
+    Show the syntax (parameter sets) for a command.
   .DESCRIPTION
-    Get the possible syntax for a command.
-    Wrapper function for Get-Command -Syntax.
+    A friendlier wrapper around 'Get-Command -Syntax'. Expands each parameter
+    set of the target command into a readable, multi-line syntax block, hiding
+    the common parameters (Verbose, ErrorAction, WhatIf, etc.). Accepts a command
+    name or a CommandInfo object (including from the pipeline). Registered as the
+    'help' alias as well as 'synt'/'syntax'.
+  .PARAMETER Name
+    Name of the command to show syntax for (parameter set 'ByName').
+  .PARAMETER CommandInfo
+    A CommandInfo object to show syntax for, typically from the pipeline
+    (parameter set 'FromCommandInfo').
+  .PARAMETER Short
+    Emit the condensed one-line-per-parameter-set form used by Get-Command,
+    instead of the expanded multi-line layout.
   .EXAMPLE
-	  Get-Syntax -Name Get-Help
+    Get-Syntax -Name Get-Help
+    Show the full, expanded syntax for Get-Help.
+  .EXAMPLE
+    syntax Get-ChildItem
+    Same thing via the 'syntax' alias.
+  .EXAMPLE
+    Get-Syntax Get-Process -Short
+    Show the condensed one-line-per-parameter-set form.
+  .EXAMPLE
+    Get-Command Set-Location | Get-Syntax
+    Pipe a CommandInfo object in instead of naming the command.
   #>
   [CmdletBinding()]
   [Alias('synt', 'syntax')]

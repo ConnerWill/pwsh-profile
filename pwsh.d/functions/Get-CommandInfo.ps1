@@ -3,12 +3,32 @@
 Function Get-CommandInfo {
   <#
   .SYNOPSIS
-      Get information for a command.
+      Resolve and return the CommandInfo object for a command.
   .DESCRIPTION
-      Get information for a command. Like 'which' in linux.
+      Returns the CommandInfo for a command (similar in spirit to 'which' in
+      Linux, but returns the object rather than text). Aliases are resolved to
+      their underlying command. Optionally searches inside a module's private
+      scope. Accepts either a name or an existing CommandInfo object.
+  .PARAMETER Name
+      Name of the command to resolve (parameter set 'ByName').
+  .PARAMETER CommandInfo
+      An existing CommandInfo object to normalize/resolve (parameter set
+      'FromCommandInfo').
+  .PARAMETER ModuleName
+      If supplied, the command is looked up inside that module's private /
+      internal scope (imports the module if needed).
+  .PARAMETER EaterOfArgs
+      Internal: swallows any extra supplied arguments so callers can splat
+      freely. Not intended for direct use.
   .EXAMPLE
-	  Get-CommandInfo -Name ssh
-      Application     ssh.exe		8.1.0.1    C:\Windows\System32\OpenSSH\ssh.exe
+      Get-CommandInfo -Name ssh
+      Returns the CommandInfo (Application) for ssh, including its path/version.
+  .EXAMPLE
+      Get-CommandInfo Get-ChildItem
+      Resolve a cmdlet by positional name.
+  .EXAMPLE
+      Get-CommandInfo -Name Format-Hex -ModuleName Microsoft.PowerShell.Utility
+      Resolve a command within a specific module's scope.
   #>
   [CmdletBinding()]
   Param (

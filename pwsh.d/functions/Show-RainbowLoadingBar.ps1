@@ -5,12 +5,23 @@ Function Show-RainbowLoadingBar {
   <#
   .SYNOPSIS
     Draw an animated rainbow bar that fills the terminal width.
+  .DESCRIPTION
+    Sweeps a truecolor (24-bit) rainbow across the full console width, one column
+    at a time, mapping each column onto the HSV color wheel. The cursor is hidden
+    during the animation and restored afterward. -Duration controls the total
+    sweep time; the per-column delay is derived from the terminal width. A port
+    of the zsh install-dotfiles loading bar. Registered under the 'rainbow' alias.
   .PARAMETER Duration
-    Approx seconds for the full sweep (default 1.5).
+    Approximate seconds for the full left-to-right sweep (default 1.5).
   .EXAMPLE
     Show-RainbowLoadingBar
+    Run a ~1.5s rainbow sweep across the terminal.
   .EXAMPLE
     Show-RainbowLoadingBar -Duration 3
+    A slower, 3-second sweep.
+  .EXAMPLE
+    rainbow
+    Run it via the 'rainbow' alias.
   #>
   [CmdletBinding()]
   [Alias('rainbow')]

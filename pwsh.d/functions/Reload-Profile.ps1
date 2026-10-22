@@ -13,6 +13,13 @@ Function Reload-Profile(){
     etc.) are declared $global: in 01_variables.ps1 so they refresh here too.
   .EXAMPLE
     Reload-Profile
+    Re-source the profile in the current session.
+  .EXAMPLE
+    ez
+    Reload via the short 'ez' alias (zsh-style).
+  .EXAMPLE
+    reload
+    Reload via the 'reload' alias.
   #>
   [CmdletBinding()]
   [Alias('reload','ez')]
@@ -31,7 +38,9 @@ Function Reload-Profile(){
   if (Get-Command Write-Centered -ErrorAction Ignore) {
     Write-Centered 'Reloading ...' -Color 46
   } else {
-    Write-Host 'Reloading ...' -ForegroundColor Green
+    $g = if ($Colors) { $Colors.Green } else { '' }
+    $r = if ($Colors) { $Colors.Reset } else { '' }
+    Write-Output "${g}Reloading ...${r}"
   }
   Start-Sleep -Milliseconds 200
   [Console]::Write("`e[1A`r`e[2K")

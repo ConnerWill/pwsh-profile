@@ -27,9 +27,10 @@ Function Out-ConditionalColor {
       Get-Process | occ @{Name='proc';'proc'='Yellow'} Name
       Property-mode coloring via the 'occ' alias.
     .EXAMPLE
-      $c = [ordered]@{ '$psitem.WS -gt 100MB' = 'Red'; '$psitem.WS -gt 50MB' = 'Yellow' }
+      $c = [ordered]@{ { $psitem.WS -gt 100MB } = 'Red'; { $psitem.WS -gt 50MB } = 'Yellow' }
       Get-Process | Out-ConditionalColor -Conditions $c
-      Conditions mode: color processes by working-set thresholds.
+      Conditions mode: color processes by working-set thresholds. Each key is a
+      script block tested against the current object ($_ / $psitem).
     #>
     [cmdletbinding(DefaultParameterSetName = "property")]
     [alias("occ")]
@@ -77,35 +78,9 @@ Function Out-ConditionalColor {
         Write-Verbose "Original foreground color is $saved"
 
         if ($PSCmdlet.ParameterSetName -eq 'conditions') {
-            #we'll need this later in the Process script block
-            #if doing complex processing
-            Write-Verbose "Getting hash table enumerator and names"
-            $compare = $conditions.GetEnumerator().name
-            Write-Verbose $($compare | Out-String)
-            #build an If/ElseIf construct on the fly
-            #the Here-strings must be left justified
-            $If = @"
- if ($($compare[0])) {
-  `$host.ui.RawUI.ForegroundColor = '$($conditions.item($($compare[0])))'
- }
-"@
-            #now add the remaining comparisons as ElseIf
-            for ($i = 1; $i -lt $conditions.count; $i++) {
-                $If += "elseif ($($compare[$i])) {
-         `$host.ui.RawUI.ForegroundColor = '$($conditions.item($($compare[$i])))'
-         }
-         "
-            } #for
-
-            #add the final else
-            $if += @"
-Else {
-`$host.ui.RawUI.ForegroundColor = `$saved
-}
-"@
-
-            Write-Verbose "Complex comparison:"
-            Write-Verbose $If
+            # Conditions are an ordered map of [scriptblock] -> color. We test
+            # each block against the current object in Process (safely, with &).
+            Write-Verbose "Using $($conditions.Count) condition block(s)"
         } #if complex parameter set
 
     } #Begin
@@ -113,8 +88,19 @@ Else {
     Process {
 
         If ($PSCmdlet.ParameterSetName -eq 'conditions') {
-            #Use complex processing
-            Invoke-Expression $if
+            # Test each script-block condition top-down; first match wins.
+            # The block is invoked with the current object as $_ / $psitem.
+            $matched = $false
+            foreach ($entry in $Conditions.GetEnumerator()) {
+                $test = $entry.Key
+                if ($test -isnot [scriptblock]) { $test = [scriptblock]::Create([string]$test) }
+                if ($InputObject | ForEach-Object $test) {
+                    $host.ui.RawUI.ForegroundColor = $entry.Value
+                    $matched = $true
+                    break
+                }
+            }
+            if (-not $matched) { $host.ui.RawUI.ForegroundColor = $saved }
         } #end complex
         else {
             #get property value as a string

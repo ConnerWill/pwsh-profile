@@ -10,14 +10,30 @@ Function Show-Colors {
   <#
   .SYNOPSIS
     Show color/ANSI references. Defaults to the 256-color block palette.
+  .DESCRIPTION
+    A single entry point for the color/ANSI demos. The -Style parameter selects
+    which reference to render:
+      Blocks (default) - the 256-color block palette (indexed), also available
+                         as Get-ANSIColors.
+      Ansi             - text attributes (bold, underline, ...) plus the 256-color
+                         foreground and background palettes, showing each escape.
+      List             - the 16 console colors, one per line.
+      Table            - every foreground color on every background color.
+      All              - render all of the above in sequence.
   .PARAMETER Style
-    Blocks (default) / Ansi / List / Table / All.
+    Which reference to show: Blocks (default) / Ansi / List / Table / All.
   .EXAMPLE
     Show-Colors
+    Show the default 256-color block palette.
   .EXAMPLE
     Show-Colors -Style Ansi
+    Show text attributes and the fore/background 256-color palettes with escapes.
+  .EXAMPLE
+    Show-Colors -Style Table
+    Show every foreground color on every background color.
   .EXAMPLE
     Show-Colors -Style All
+    Render every reference in sequence.
   #>
   [CmdletBinding()]
   param(
@@ -46,7 +62,11 @@ Function Show-Colors {
     # (Original used an Add-Border header that no longer exists -> plain header.)
     $t = '`e'   # the literal text shown for the ESC byte
 
-    function _hdr($label) { Write-Host "`n--- $label ---" -ForegroundColor Cyan }
+    function _hdr($label) {
+      $cy = if ($Colors) { $Colors.Cyan } else { "`e[38;5;87m" }
+      $rs = if ($Colors) { $Colors.Reset } else { "`e[0m" }
+      [Console]::WriteLine("`n${cy}--- $label ---${rs}")
+    }
 
     _hdr 'Basic Sequences'
     $basic = [ordered]@{ 1='Bold'; 2='Faint'; 3='Italic'; 4='Underline';

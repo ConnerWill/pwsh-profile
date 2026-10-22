@@ -5,18 +5,33 @@ Function Write-Centered {
   <#
   .SYNOPSIS
     Print text centered across the terminal width.
+  .DESCRIPTION
+    Pads a string on both sides so it sits centered in the current console
+    width (falling back to 80 columns when the width can't be determined, e.g.
+    redirected output). Optionally colors the text with a 256-color value and
+    pads with a custom fill character to create a titled rule. With -NoNewline
+    the line is written without a trailing newline, which is useful for in-place
+    overwrite effects (e.g. a transient "Reloading ..." banner).
   .PARAMETER Text
     The text to center.
   .PARAMETER Color
-    256-color value for the text (optional).
+    256-color value for the text (optional; no color when omitted).
   .PARAMETER Fill
     Character used to pad each side (default: space).
   .PARAMETER NoNewline
     Don't emit a trailing newline (useful for in-place overwrite effects).
   .EXAMPLE
     Write-Centered 'Reloading ...' -Color 46
+    Center a green status message across the terminal.
   .EXAMPLE
     Write-Centered 'WELCOME' -Fill '=' -Color 33
+    Make a centered title padded with '=' on both sides.
+  .EXAMPLE
+    Write-Centered 'working' -NoNewline; Start-Sleep 1; Write-Host "`rdone"
+    Overwrite a centered line in place (no trailing newline).
+  .EXAMPLE
+    'one','two' | ForEach-Object { center $_ }
+    Center several strings via the 'center' alias.
   #>
   [CmdletBinding()]
   [Alias('center')]

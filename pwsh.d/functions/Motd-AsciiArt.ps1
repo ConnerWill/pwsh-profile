@@ -11,6 +11,9 @@ Function Motd-AsciiArt(){
   .EXAMPLE
     Motd-AsciiArt
     Print a random piece of ASCII art.
+  .EXAMPLE
+    1..3 | ForEach-Object { Motd-AsciiArt }
+    Print three random banners in a row.
   #>
   if (-not ($Art -is [hashtable])) {
     $artFile = Join-Path (Split-Path -Path $PROFILE.CurrentUserAllHosts) 'ascii-art.ps1'

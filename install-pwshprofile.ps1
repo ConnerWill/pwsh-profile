@@ -247,6 +247,7 @@ $($c.cyan)       grep                   $($c.grey)# Search text like Linux 'grep
 $($c.cyan)       which ez               $($c.grey)# resolve a command/alias/function$($c.reset)
 $($c.cyan)       Motd-AsciiArt          $($c.grey)# Print a random ASCII-art banner from the `$Art hashtable$($c.reset)
 $($c.cyan)       Show-RainbowLoadingBar $($c.grey)# Draw an animated rainbow bar that fills the terminal width$($c.reset)
+$($c.cyan)       draw_line              $($c.grey)# full-width line (bar); try 'draw_line -Style 2 -Color 198' or 'line'$($c.reset)
 $($c.cyan)       Invoke-BeepMusic       $($c.grey)# Play a sequence of random beeps (toy "music") through the console speaker$($c.reset)
 $($c.cyan)       Get-PwSHKeybindings    $($c.grey)# list PSReadLine key handlers$($c.reset)
 

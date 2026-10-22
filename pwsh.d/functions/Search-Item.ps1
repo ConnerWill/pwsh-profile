@@ -37,7 +37,7 @@ Function Search-Item {
       [string]$path = $pwd
   )
   Process {
-    Write-Host "Searching in $path"
+    Write-Verbose "Searching in $path"
     Get-ChildItem -Path $path -Recurse -Filter $filter -EA SilentlyContinue | ForEach-Object {
       Write-Output $_.FullName
     }
