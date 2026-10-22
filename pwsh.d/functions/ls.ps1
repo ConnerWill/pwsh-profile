@@ -267,7 +267,7 @@ Function ll(){
   $lsd = Get-LsdCommand
   if ($lsd) {
     $perm = if ($IsWindows) { @() } else { @('--permission', 'octal') }
-    & $lsd.Source --color always --icon always --oneline --long --almost-all @perm $Path
+    & $lsd.Source --color always --icon always --oneline --long --almost-all @perm --date '+%Y%m%d-%H%M%S' $Path
     return
   }
   try { Get-ChildItemColor -Path $Path }
