@@ -246,6 +246,7 @@ $($c.cyan)       touch f.txt            $($c.grey)# create an empty file$($c.res
 $($c.cyan)       grep                   $($c.grey)# Search text like Linux 'grep' (wraps Select-String)$($c.reset)
 $($c.cyan)       which ez               $($c.grey)# resolve a command/alias/function$($c.reset)
 $($c.cyan)       Motd-AsciiArt          $($c.grey)# Print a random ASCII-art banner from the `$Art hashtable$($c.reset)
+$($c.cyan)       Show-RainbowLoadingBar $($c.grey)# Draw an animated rainbow bar that fills the terminal width$($c.reset)
 $($c.cyan)       Invoke-BeepMusic       $($c.grey)# Play a sequence of random beeps (toy "music") through the console speaker$($c.reset)
 $($c.cyan)       Get-PwSHKeybindings    $($c.grey)# list PSReadLine key handlers$($c.reset)
 
