@@ -15,6 +15,14 @@ $DOTFILES        = "${HOME}\.dotfiles"
 ## override in powershell-config.ps1 (e.g. code, nvim, kiro).
 $global:EDITOR = $EDITOR ?? 'notepad.exe'
 
+## Pager used by functions that page output (e.g. `cht`, PsReadLineVIExtension).
+## Override with a plain $PAGER in powershell-config.ps1 (same style as $EDITOR);
+## we export it to $env:PAGER, which is what the consumers actually read.
+## Default 'less -FRX' (quit if one screen, raw ANSI colors, no screen clear)
+## when less is on PATH; left unset otherwise (consumers fall back on their own).
+$global:PAGER = $PAGER ?? $(if (Get-Command less -ErrorAction Ignore) { 'less -FRX' })
+$env:PAGER    = $PAGER
+
 $HISTFILE = "$env:APPDATA\Microsoft\Windows\PowerShell\PSReadLine\$($host.Name)_history.txt"
 
 ## git config paths (local repo config vs the global ~/.config/git/config)
